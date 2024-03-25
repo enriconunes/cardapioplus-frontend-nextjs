@@ -1,22 +1,19 @@
 import React, { useState } from 'react';
 
-export function Checkbox() {
+export function Checkbox({children, ...rest}) {
 
-    const [checked, setChecked] = useState(false);
+  const [isChecked, setIsChecked] = useState(false)
 
   const handleCheckboxChange = () => {
-    setChecked(!checked);
-  };
+    setIsChecked(!isChecked)
+  }
 
   return (
-    <label className="flex items-center space-x-2 cursor-pointer">
-      <input
-        type="checkbox"
-        className="form-checkbox text-green-500 h-5 w-5"
-        checked={checked}
-        onChange={handleCheckboxChange}
-      />
-      <span className="text-gray-700">Aceitar termos e condições</span>
-    </label>
+    <div className='w-full mb-2 -mt-1'>
+      <label className="inline-flex items-center">
+        <input type="checkbox" className="border text-green-500 focus:ring-2 focus:ring-green-500" {...rest}/>
+        <span className="ml-2">{children}</span>
+      </label>
+    </div>
   );
 }

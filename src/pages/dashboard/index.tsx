@@ -97,6 +97,15 @@ export default function dashboard({restaurantDetails, menuDetails}: restaurantDe
     const [restaurant, setRestaraunt] = useState(restaurantDetails || null)
     const [menu, setMenu] = useState(menuDetails || null)
 
+    // usada ao adicionar um novo item ou categoria para atualizar a listagem do menu
+    // funcao passada como parametro para os componentes CollapseItem e CollapseCategory
+    async function updateMenu(){
+        const apiClient = setupAPIClient()
+        const menuDetails = await apiClient.get('/menu')
+        const menu = menuDetails.data as MenuRequest
+        setMenu(menu)
+    }
+
     return(
         <>
 
@@ -108,10 +117,10 @@ export default function dashboard({restaurantDetails, menuDetails}: restaurantDe
 
             <Header/>
 
-            <main className="px-3 max-w-2xl mx-auto">
+            <main className="px-3 max-w-xl mx-auto">
 
                 {/* restaurant details */}
-                <div className="px-2 flex flex-col items-center justify-center md:bg-white md:shadow-md mx-auto bg-white rounded-md shadow-md mt-4">
+                <div className="px-4 flex flex-col items-center justify-center md:px-8 md:bg-white md:shadow-md mx-auto bg-white rounded-md shadow-md mt-4">
 
                     <div className="w-full flex flex-col -space-y-2 mt-4 font-medium text-lg text-gray-700">
                         <span>Bem-vindo ao seu cardápio,</span>
@@ -178,17 +187,18 @@ export default function dashboard({restaurantDetails, menuDetails}: restaurantDe
                         </div>
                         
                         {/* add new cateogory */}
-                        <CollapseCategory/>
+                        <CollapseCategory updateMenu={updateMenu}/>
 
                         {/* begin of listing */}
                         {menu?.Categories.map(category => (
                             <div key={category.idCategory}>
                                 {/* category name */}
                                 <div>
-                                    <h4 className="text-lg font-medium mt-3">{category.name}</h4>
+                                    <h4 className="text-lg font-medium mt-3 mb-2">{category.name}</h4>
                                 </div>
 
-                                <CollapseItem/>
+                                {/* create a new item */}
+                                <CollapseItem idCategory={category.idCategory} updateMenu={updateMenu}/>
 
                                 {/* item card */}
                                 {category.Items.map(item =>(

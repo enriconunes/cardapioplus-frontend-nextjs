@@ -6,44 +6,46 @@ import { ExclamationTriangleIcon } from '@heroicons/react/24/outline'
 import { setupAPIClient } from '@/src/services/api'
 
 import { toast } from 'react-toastify'
+import { Item } from '@/src/pages/dashboard'
 
-interface modalProps{
-    nameCategory: string
-    idCategory: string
-    viewModal: boolean
+interface ItemProps{
+    item: Item
+    viewModalDeleteItem: boolean
     updateMenu: () => Promise<void>
-    handleViewModal: () => void
+    handleViewModalDeleteItem: () => void
+    handleViewModalItem: () => void
 }
 
-export function ModalCategory({nameCategory, idCategory, viewModal, updateMenu, handleViewModal}: modalProps) {
+export function ModalDeleteItem({item, viewModalDeleteItem, handleViewModalDeleteItem, handleViewModalItem, updateMenu}: ItemProps){
 
-  async function handleDelete(){
-    try{
-        const apiClient = setupAPIClient();
-        await apiClient.put('/category/delete', {
-            idCategory: idCategory,
-        });
+    const cancelButtonRef = useRef(null)
 
-        // atualizar listagem do menu
-        updateMenu()
+    async function handleDelete(){
 
-        // fechar formulario
-        handleViewModal()
+        try{
+            const apiClient = setupAPIClient();
+            await apiClient.put('/item/delete', {
+                idItem: item.idItem
+            });
 
-        toast.success("A categoria " + nameCategory +  " foi deletada")
+            // fechar os dois modais
+            handleViewModalDeleteItem()
+            handleViewModalItem()
 
-    } catch(err){
-        toast.error("Erro ao deletar categoria. Tente novamente.")
+            // atualizar listagem do menu
+            updateMenu()
+
+            toast.success("Item deletado com sucesso.")
+
+        } catch(err){
+            toast.error("Erro ao deletar este item. Tente novamente.")
+        }
+        
     }
-  }
 
-  const [open, setOpen] = useState(true)
-
-  const cancelButtonRef = useRef(null)
-
-  return (
-    <Transition.Root show={viewModal} as={Fragment}>
-      <Dialog as="div" className="relative z-50" initialFocus={cancelButtonRef} onClose={handleViewModal}>
+    return(
+            <Transition.Root show={viewModalDeleteItem} as={Fragment}>
+      <Dialog as="div" className="relative z-50" initialFocus={cancelButtonRef} onClose={handleViewModalDeleteItem}>
         <Transition.Child
           as={Fragment}
           enter="ease-out duration-300"
@@ -75,11 +77,11 @@ export function ModalCategory({nameCategory, idCategory, viewModal, updateMenu, 
                     </div>
                     <div className="mt-3 text-center sm:ml-4 sm:mt-0 sm:text-left">
                       <Dialog.Title as="h3" className="text-base font-semibold leading-6 text-gray-900">
-                        Deletar categoria {nameCategory}
+                        Deletar {item.name}
                       </Dialog.Title>
                       <div className="mt-2">
                         <p className="text-sm text-gray-500">
-                          Você tem certeza que deseja deletar a categoria? Todos os itens dessa categoria também serão deletados permanentemente.
+                          Você tem certeza que deseja deletar permanentemente o item {item.name}? Essa operação não é reversível.
                         </p>
                       </div>
                     </div>
@@ -97,7 +99,7 @@ export function ModalCategory({nameCategory, idCategory, viewModal, updateMenu, 
                     type="button"
                     className="inline-flex w-full justify-center py-2 border border-gray-600 text-gray-600 shadow-sm font-medium bg-gray-50 hover:bg-gray-100 px-3 sm:ml-3 sm:w-auto mt-2 md:mt-0"
                     ref={cancelButtonRef}
-                    onClick={handleViewModal}
+                    onClick={handleViewModalDeleteItem}
                   >
                     Cancelar
                   </button>
@@ -108,5 +110,6 @@ export function ModalCategory({nameCategory, idCategory, viewModal, updateMenu, 
         </div>
       </Dialog>
     </Transition.Root>
-  )
+    )
+
 }

@@ -124,8 +124,8 @@ export function CollapseItem({ idCategory, updateMenu }: itemProps) {
             data.append('name', name);
             data.append('description', description);
             data.append('price', price);
-            data.append('avaliable', isAvaliable ? 'true' : 'false'); // converter para string
-            data.append('vegan', isVegan ? 'true' : 'false'); // converter para string
+            data.append('avaliable', isAvaliable ? '1' : '0'); // converter para string
+            data.append('vegan', isVegan ? '1' : '0'); // converter para string
             data.append('idCategory', idCategory);
             data.append('image', image);
 

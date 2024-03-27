@@ -7,6 +7,7 @@ import { ButtonAdd } from '../ButtonAdd'
 import { FormEvent } from 'react'
 import { FiImage } from 'react-icons/fi'
 import { ChangeEvent } from 'react'
+import { ModalDeleteItem } from '../ModalDeleteItem'
 
 import { Item } from '@/src/pages/dashboard'
 
@@ -33,12 +34,15 @@ export function ModalItem({item, viewModalItem, updateMenu, handleViewModalItem}
     // loading button
     const [loading, setLoading] = useState(false)
 
+    // controles modal delete item
+    const [viewModalDeleteItem, setViewModalDeleteItem] = useState(false)
+
     // form values
     const [name, setName] = useState(item.name)
     const [price, setPrice] = useState(item.price)
     const [description, setDescription] = useState(item.description)
     const [isVegan, setIsVegan] = useState(false)
-    const [isAvaliable, setIsAvaliable] = useState(true)
+    const [isAvaliable, setIsAvaliable] = useState(false)
 
     // text area counter caracter
     const [textCount, setTextCount] = useState(description.length)
@@ -62,28 +66,11 @@ export function ModalItem({item, viewModalItem, updateMenu, handleViewModalItem}
     }
     }
 
-  async function handleDelete(){
-    // try{
-    //     const apiClient = setupAPIClient();
-    //     // await apiClient.put('/category/delete', {
-    //     //     idCategory: idCategory,
-    //     // });
+    function handleViewModalDeleteItem(){
+      setViewModalDeleteItem(!viewModalDeleteItem)
+    }
 
-    //     // atualizar listagem do menu
-    //     updateMenu()
-
-    //     // fechar formulario
-    //     handleViewModalItem()
-
-    //     // toast.success("A categoria " + nameCategory +  " foi deletada")
-
-    // } catch(err){
-    //     toast.error("Erro ao deletar categoria. Tente novamente.")
-    // }
-    alert("Deletar item")
-  }
-
-  async function handleSubmit(e: FormEvent){
+    async function handleSubmit(e: FormEvent){
 
         e.preventDefault();
 
@@ -109,22 +96,14 @@ export function ModalItem({item, viewModalItem, updateMenu, handleViewModalItem}
             data.append('name', name);
             data.append('description', description);
             data.append('price', price);
-            data.append('avaliable', isAvaliable ? 'true' : 'false'); // converter para string
-            data.append('vegan', isVegan ? 'true' : 'false'); // converter para string
+            data.append('avaliable', isAvaliable ? '1' : '0'); // converter para string
+            data.append('vegan', isVegan ? '1' : '0'); // converter para string
             data.append('idItem', item.idItem);
             data.append('image', image);
 
             const apiClient = setupAPIClient();
 
             await apiClient.put('/item', data);
-
-            // limpar campos do formulario
-            setName('')
-            setPrice('')
-            setDescription('')
-            setImage(null)
-            setImageURL('')
-            setTextCount(0)
 
             // desativar loading
             setLoading(false)
@@ -211,18 +190,11 @@ export function ModalItem({item, viewModalItem, updateMenu, handleViewModalItem}
             >
               <label className="h-32 text-gray-600 bg-white w-full mb-2 border border-gray-300 flex flex-col justify-center items-center hover:cursor-pointer overflow-hidden mt-1">
 
-                {!imageURL && (
-                  <div className="flex flex-col items-center z-50 absolute text-gray-500">
-                    {/* icone */}
-                    <span><FiImage></FiImage></span>
+                <div className="flex flex-col items-center z-50 absolute text-white text-opacity-80">
+                  {/* icone */}
+                  <span><FiImage size={45}></FiImage></span>
 
-                    <span
-                      className="text-sm"
-                    >
-                      Adicionar imagem
-                    </span>
-                  </div>
-                )}
+                </div>
 
                 <input type="file" accept="image/png image/jpeg" className="hidden" onChange={handleFile} />
 
@@ -264,13 +236,13 @@ export function ModalItem({item, viewModalItem, updateMenu, handleViewModalItem}
               </div>
 
               <Checkbox
-                defaultChecked={isVegan}
+                value={isVegan}
                 onChange={() => { setIsVegan(!isVegan) }}>
                 Item vegano
               </Checkbox>
 
               <Checkbox
-                defaultChecked={isAvaliable}
+                value={isAvaliable}
                 onChange={() => { setIsAvaliable(!isAvaliable) }}>
                 Está disponível
               </Checkbox>
@@ -287,7 +259,7 @@ export function ModalItem({item, viewModalItem, updateMenu, handleViewModalItem}
               <button
                 type="button"
                 className="w-full py-2 border border-red-600 text-red-600 shadow-sm font-medium bg-red-50 hover:bg-red-100 flex justify-center sm:ml-3 sm:w-auto md:px-3 mt-2 md:mt-0 md:mx-2"
-                onClick={handleDelete}
+                onClick={handleViewModalDeleteItem}
               >
                 Deletar item
               </button>
@@ -303,13 +275,23 @@ export function ModalItem({item, viewModalItem, updateMenu, handleViewModalItem}
             </div>
 
             </form>
+
+            <ModalDeleteItem handleViewModalDeleteItem={handleViewModalDeleteItem}
+            item={item}
+            updateMenu={updateMenu}
+            viewModalDeleteItem={viewModalDeleteItem}
+            handleViewModalItem={handleViewModalItem}
+            />
             
           </Dialog.Panel>
         </Transition.Child>
       </div>
     </div>
   </Dialog>
+
+  
 </Transition.Root>
+
 
   )
 }

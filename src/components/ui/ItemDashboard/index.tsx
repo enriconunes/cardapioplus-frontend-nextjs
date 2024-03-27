@@ -21,7 +21,8 @@ export function ItemDashboard({item, updateMenu}: ItemProps){
     return(
             <button
             key={item.idItem}
-            className="flex items-center justify-between p-2 mt-3 bg-white w-full rounded-md shadow-md hover:cursor-pointer h-20">
+            className="flex items-center justify-between p-2 mt-3 bg-white w-full rounded-md shadow-md hover:cursor-pointer h-20"
+            onClick={handleViewModalItem}>
             
                 {/* image item */}
                 <div className="w-20 h-full relative">
@@ -41,7 +42,7 @@ export function ItemDashboard({item, updateMenu}: ItemProps){
                 {/* edit icon */}
                 <div
                 className="w-2/12 h-full flex justify-end pr-2 items-center"
-                onClick={handleViewModalItem}>
+                >
                     <MdEdit size={21}/>
                 </div>
 

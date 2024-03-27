@@ -124,16 +124,16 @@ export default function dashboard({restaurantDetails, menuDetails}: restaurantDe
                 {/* restaurant details */}
                 <div className="px-4 flex flex-col items-center justify-center md:px-8 md:bg-white md:shadow-md mx-auto bg-white rounded-md shadow-md mt-4">
 
-                    <div className="w-full flex flex-col -space-y-2 mt-4 font-medium text-lg text-gray-700">
+                    <div className="w-full flex flex-col -space-y-2 mt-4 text-xl text-gray-700">
                         <span>Bem-vindo ao seu cardápio,</span>
                         <span>{user?.name}!</span>
                     </div>
 
                     {/* avatar profile */}
-                    <div className="w-1/2 md:max-w-40 mt-5 rounded-full overflow-hidden border-4 border-gray-100">
+                    <div className="w-4/6 md:max-w-40 mt-5 rounded-full overflow-hidden border-4 border-gray-100">
                         <img
                         src={restaurant?.profileURL}
-                        alt="Descrição da imagem"
+                        alt="Imagem de perfil do restaurante"
                         className="w-full"
                         />
                     </div>
@@ -142,7 +142,7 @@ export default function dashboard({restaurantDetails, menuDetails}: restaurantDe
                     <div className="bg-blue-00 w-full flex flex-col mt-2 text-gray-800">
 
                         {/* restaurant name */}
-                        <h1 className="text-center font-medium text-xl mb-1">{restaurant?.name}</h1>
+                        <h1 className="text-center font-medium text-xl mb-3">{restaurant?.name}</h1>
 
                         <div className="flex flex-col mt-1 ">
                             <span className="font-medium -mb-1">Contato</span>
@@ -160,16 +160,16 @@ export default function dashboard({restaurantDetails, menuDetails}: restaurantDe
                         </div>
 
                         {restaurant?.doDelivery === 1 ? (
-                            <div className="flex items-center font-medium text-green-700">*Delivery disponível <MdDeliveryDining size={20} className="text-green-700 ml-1"/></div>
+                            <div className="items-center font-medium text-green-600 inline-flex w-full justify-center py-2 border border-green-600  shadow-sm bg-green-50 px-3 sm:ml-3 sm:w-auto md:mx-0 mt-2">*Delivery disponível <MdDeliveryDining size={20} className="text-green-600 ml-1"/></div>
                         ):(
-                            <div className="flex items-center font-medium text-red-700">*Delivery indisponível <MdDeliveryDining size={20} className="text-red-700 ml-1"/></div>
+                            <div className="items-center font-medium text-red-600 inline-flex w-full justify-center py-2 border border-red-600  shadow-sm bg-red-50 px-3 sm:ml-3 sm:w-auto md:mx-0 mt-2">*Delivery indisponível <MdDeliveryDining size={20} className="text-red-600 ml-1"/></div>
                         )}
 
                         {/* edit profile */}
                         <div className="w-full flex justify-end mt-2 mb-6">
                             <Link
                             href={"/edit"}
-                            className="px-2 font-medium text-blue-900 border border-gray-300 w-fit"
+                            className="items-center font-medium text-gray-700 inline-flex w-full justify-center py-2 border border-gray-600  shadow-sm bg-gray-50 px-3 sm:ml-3 sm:w-auto hover:bg-gray-100"
                             >
                                 Editar descrição
                             </Link>

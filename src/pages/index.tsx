@@ -14,6 +14,12 @@ import { useContext, useState, FormEvent } from "react";
 // context
 import { AuthContext } from "@/src/contexts/AuthContext";
 
+// server side function - permission just for guest
+import { canSSRGuest } from "../utils/canSSRGuest";
+
+// api config
+import { setupAPIClient } from "../services/api";
+
 export default function Home() {
 
   const { signIn } = useContext(AuthContext)
@@ -93,3 +99,18 @@ export default function Home() {
     </>
   );
 }
+
+
+// as propriedades das fuções server side são executadas sempre que a pagina é carregada (antes de renderizar o front end), similar a um middleware
+// a funcao abaixo é utilizada para conferir se o user ja está logado antes de renderizar a pagina de login
+// se estiver logado, redireciona para o dashboard
+
+export const getServerSideProps = canSSRGuest(async(ctx) => {
+
+    // nao retorna nada, apenas executa a funcao 'canSSRGuest' criada em ./utils para redirecionar o user caso o cookie de autenticação exista.
+    return{
+        props: {
+
+        }
+    }
+})

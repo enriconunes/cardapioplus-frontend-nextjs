@@ -16,6 +16,9 @@ import { AuthContext } from "@/src/contexts/AuthContext";
 // pop-up
 import { toast } from "react-toastify";
 
+// server side function - permission just for guest
+import { canSSRGuest } from "../../utils/canSSRGuest";
+
 export default function Home() {
 
   const { signUp } = useContext(AuthContext)
@@ -119,3 +122,13 @@ export default function Home() {
     </>
   );
 }
+
+export const getServerSideProps = canSSRGuest(async(ctx) => {
+
+    // nao retorna nada, apenas executa a funcao 'canSSRGuest' criada em ./utils para redirecionar o user caso o cookie de autenticação exista.
+    return{
+        props: {
+
+        }
+    }
+})

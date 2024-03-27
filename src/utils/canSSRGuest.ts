@@ -8,7 +8,7 @@ export function canSSRGuest<P>(fn: GetServerSideProps<P>){
         const cookies = parseCookies(ctx);
 
         // Se o user tentar acessar a pagina que chamar essa funcao ja tiver logado (existe o cookie de token), entao redireciona para a pagina de dashboard.
-        if(cookies['@nextpizza.token']){
+        if(cookies['@cardapioplus.token']){
             return {
                 redirect: {
                     destination: '/dashboard',

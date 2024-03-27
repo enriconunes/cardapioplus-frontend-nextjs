@@ -107,6 +107,11 @@ export function CollapseItem({ idCategory, updateMenu }: itemProps) {
             return
         }
 
+        if(textCount > 255){
+            toast.warning("A descrição ultrapassa o limite de caracteres. Reduza o tamanho do texto para continuar.")
+            return
+        }
+
         try{
 
             // iniciar loading

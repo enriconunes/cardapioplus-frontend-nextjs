@@ -24,10 +24,6 @@ interface modalProps{
 
 export function ModalItem({item, viewModalItem, updateMenu, handleViewModalItem}: modalProps) {
 
-
-    // collapse controller
-    const [isFormVisible, setIsFormVisible] = useState(false);
-
     // image preview controller
     // preview temporario
     const [imageURL, setImageURL] = useState(item.imageURL)
@@ -67,31 +63,32 @@ export function ModalItem({item, viewModalItem, updateMenu, handleViewModalItem}
     }
 
   async function handleDelete(){
-    try{
-        const apiClient = setupAPIClient();
-        // await apiClient.put('/category/delete', {
-        //     idCategory: idCategory,
-        // });
+    // try{
+    //     const apiClient = setupAPIClient();
+    //     // await apiClient.put('/category/delete', {
+    //     //     idCategory: idCategory,
+    //     // });
 
-        // atualizar listagem do menu
-        updateMenu()
+    //     // atualizar listagem do menu
+    //     updateMenu()
 
-        // fechar formulario
-        handleViewModalItem()
+    //     // fechar formulario
+    //     handleViewModalItem()
 
-        // toast.success("A categoria " + nameCategory +  " foi deletada")
+    //     // toast.success("A categoria " + nameCategory +  " foi deletada")
 
-    } catch(err){
-        toast.error("Erro ao deletar categoria. Tente novamente.")
-    }
+    // } catch(err){
+    //     toast.error("Erro ao deletar categoria. Tente novamente.")
+    // }
+    alert("Deletar item")
   }
 
   async function handleSubmit(e: FormEvent){
 
         e.preventDefault();
 
-        if(name === '' || price === '' || description === '' || image === null){
-            toast.warning("Preecha todos os dados para adicionar um novo item.")
+        if(name === '' || price === '' || description === ''){
+            toast.warning("Preecha todos os dados para atualizar o item.")
             return
         }
 
@@ -114,11 +111,12 @@ export function ModalItem({item, viewModalItem, updateMenu, handleViewModalItem}
             data.append('price', price);
             data.append('avaliable', isAvaliable ? 'true' : 'false'); // converter para string
             data.append('vegan', isVegan ? 'true' : 'false'); // converter para string
+            data.append('idItem', item.idItem);
             data.append('image', image);
 
             const apiClient = setupAPIClient();
 
-            await apiClient.post('/item', data);
+            await apiClient.put('/item', data);
 
             // limpar campos do formulario
             setName('')
@@ -131,19 +129,19 @@ export function ModalItem({item, viewModalItem, updateMenu, handleViewModalItem}
             // desativar loading
             setLoading(false)
 
-            // fechar formulario
+            // fechar modal
             handleViewModalItem()
 
             // funcao que atualiza useState do menu para atualizar a listagem
             // definida no dashboard e passada para este componente como parametro
             updateMenu()
         
-            toast.success("Item adicionado com sucesso!")
+            toast.success("Item atualizado com sucesso!")
 
             return
 
         } catch(error){
-            toast.error("Oops! Erro ao cadastrar produto: " + error)
+            toast.error("Oops! Erro ao atualizar o item: " + error)
         }
 
   }
@@ -177,8 +175,6 @@ export function ModalItem({item, viewModalItem, updateMenu, handleViewModalItem}
             return;
         }
   }
-
-  const [open, setOpen] = useState(true)
 
   const cancelButtonRef = useRef(null)
 
@@ -280,18 +276,17 @@ export function ModalItem({item, viewModalItem, updateMenu, handleViewModalItem}
               </Checkbox>
 
 
-              <div className={`py-3 sm:flex sm:flex-row md:px-0 sm:px-6 w-full`}>
+              <div className={`py-3 sm:flex md:justify-end sm:flex-row md:px-0 sm:px-6 w-full`}>
               <button
                 type="submit"
-                className="w-full py-2 border border-green-600 text-green-600 shadow-sm font-medium bg-green-50 hover:bg-green-100 flex justify-center sm:ml-3 sm:w-auto md:px-3"
-                onClick={handleDelete}
+                className="w-full py-2 border border-green-600 text-green-600 shadow-sm font-medium bg-green-50 hover:bg-green-100 flex justify-center sm:ml-3 md:mx-0 sm:w-auto md:px-3"
               >
-                Atualizar
+                Atualizar informações
               </button>
 
               <button
                 type="button"
-                className="w-full py-2 border border-red-600 text-red-600 shadow-sm font-medium bg-red-50 hover:bg-red-100 flex justify-center sm:ml-3 sm:w-auto md:px-3 mt-2 md:mt-0"
+                className="w-full py-2 border border-red-600 text-red-600 shadow-sm font-medium bg-red-50 hover:bg-red-100 flex justify-center sm:ml-3 sm:w-auto md:px-3 mt-2 md:mt-0 md:mx-2"
                 onClick={handleDelete}
               >
                 Deletar item

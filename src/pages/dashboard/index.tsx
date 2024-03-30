@@ -124,13 +124,17 @@ export default function dashboard({restaurantDetails, menuDetails}: restaurantDe
                 {/* restaurant details */}
                 <div className="px-4 flex flex-col items-center justify-center md:px-8 md:bg-white md:shadow-md mx-auto bg-white rounded-md shadow-md mt-4">
 
-                    <div className="w-full flex flex-col -space-y-2 mt-4 text-xl text-gray-700">
+                    <div className="w-full flex flex-col -space-y-2 mt-4 text-xl text-gray-700 drop-shadow-md">
                         <span>Bem-vindo ao seu cardápio,</span>
-                        <span>{user?.name}!</span>
+                        <span className="mb-4">{user?.name}!</span>
+                        <div className="w-full mt-10 pt-4 pb-1 md:pb-4">
+                            <hr />
+                        </div>
                     </div>
 
+
                     {/* avatar profile */}
-                    <div className="w-4/6 md:max-w-40 mt-5 rounded-full overflow-hidden border-4 border-gray-100">
+                    <div className="w-4/6 md:max-w-48 mt-5 rounded-full overflow-hidden border-4 border-gray-100">
                         <img
                         src={restaurant?.profileURL}
                         alt="Imagem de perfil do restaurante"
@@ -160,15 +164,15 @@ export default function dashboard({restaurantDetails, menuDetails}: restaurantDe
                         </div>
 
                         {restaurant?.doDelivery === 1 ? (
-                            <div className="items-center font-medium text-green-600 inline-flex w-full justify-center py-2 border border-green-600  shadow-sm bg-green-50 px-3 sm:ml-3 sm:w-auto md:mx-0 mt-2">*Delivery disponível <MdDeliveryDining size={20} className="text-green-600 ml-1"/></div>
+                            <div className="items-center font-medium text-green-600 inline-flex w-full justify-center py-2 border border-green-600  shadow-sm bg-green-50 px-3 sm:w-auto md:mx-0 mt-2">*Delivery disponível <MdDeliveryDining size={20} className="text-green-600 ml-1"/></div>
                         ):(
-                            <div className="items-center font-medium text-red-600 inline-flex w-full justify-center py-2 border border-red-600  shadow-sm bg-red-50 px-3 sm:ml-3 sm:w-auto md:mx-0 mt-2">*Delivery indisponível <MdDeliveryDining size={20} className="text-red-600 ml-1"/></div>
+                            <div className="items-center font-medium text-red-600 inline-flex w-full justify-center py-2 border border-red-600  shadow-sm bg-red-50 px-3 sm:w-auto md:mx-0 mt-2">*Delivery indisponível <MdDeliveryDining size={20} className="text-red-600 ml-1"/></div>
                         )}
 
                         {/* edit profile */}
                         <div className="w-full flex justify-end mt-2 mb-6">
                             <Link
-                            href={"/edit"}
+                            href={"/details"}
                             className="items-center font-medium text-gray-700 inline-flex w-full justify-center py-2 border border-gray-600  shadow-sm bg-gray-50 px-3 sm:ml-3 sm:w-auto hover:bg-gray-100"
                             >
                                 Editar descrição
@@ -187,6 +191,11 @@ export default function dashboard({restaurantDetails, menuDetails}: restaurantDe
                         <div>
                             <h3 className="text-lg font-medium mb-3 text-center">Detalhes do cardápio</h3>
                         </div>
+
+
+                        {menu?.Categories.length == 0 && (
+                            <div className="items-center font-medium text-cyan-600 w-full justify-center py-2 border border-cyan-600  shadow-sm bg-cyan-50 px-3  sm:w-auto md:mx-0 mt-2 mb-3">Seu cardápio ainda está vazio. Comece adicionando uma nova categoria de alimentos para cadastrar os produtos do seu restaurante.</div>
+                        )}
                         
                         {/* add a new cateogory */}
                         <CollapseCategory updateMenu={updateMenu}/>

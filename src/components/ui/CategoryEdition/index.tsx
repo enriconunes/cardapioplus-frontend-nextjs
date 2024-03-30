@@ -61,7 +61,7 @@ export function CategoryEdition({nameCategory, idCategory, updateMenu}: Category
     }
 
     return(
-        <div className="md:mt-6">
+        <div className="md:mt-6 md:mb-2">
             <div className={`mt-3 flex items-center gap-x-2`}>
                 <h4 className="text-lg font-medium">{nameCategory}</h4>
                 <button onClick={handleView}><label htmlFor="name"><FaEdit className="text-blue-900 hover:text-blue-700 hover:cursor-pointer"/></label></button>

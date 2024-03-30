@@ -82,7 +82,9 @@ export function CollapseCategory({updateMenu}: categoryProps) {
                 <ButtonAdd
                 loading={loading}
                 type="submit"
-                />
+                >
+                    Adicionar
+                </ButtonAdd>
             </form>
         </div>
     );

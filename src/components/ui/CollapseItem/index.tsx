@@ -242,9 +242,11 @@ export function CollapseItem({ idCategory, updateMenu }: itemProps) {
                 </Checkbox>
                         
                 <ButtonAdd
-                type='submit'
                 loading={loading}
-                />
+                type="submit"
+                >
+                    Adicionar
+                </ButtonAdd>
 
             </form>
         </div>

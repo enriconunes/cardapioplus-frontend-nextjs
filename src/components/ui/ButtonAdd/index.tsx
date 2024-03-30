@@ -5,7 +5,7 @@ interface buttonProps extends ButtonHTMLAttributes<HTMLButtonElement>{
     loading?: boolean
 }
 
-export function ButtonAdd({loading, ...rest}: buttonProps){
+export function ButtonAdd({children, loading, ...rest}: buttonProps){
     
     return(
 
@@ -18,7 +18,7 @@ export function ButtonAdd({loading, ...rest}: buttonProps){
             <FaSpinner className="animate-spin" color="#16a34a" size={23}/>
             ) : (
             <a>
-                Adicionar
+                {children}
             </a>
         )} 
         </button>

@@ -23,7 +23,7 @@ interface modalProps{
     handleViewModalItem: () => void
 }
 
-export function ModalItem({item, viewModalItem, updateMenu, handleViewModalItem}: modalProps) {
+export default function ModalItem({item, viewModalItem, updateMenu, handleViewModalItem}: modalProps) {
 
     // image preview controller
     // preview temporario
@@ -76,6 +76,16 @@ export function ModalItem({item, viewModalItem, updateMenu, handleViewModalItem}
 
         if(name === '' || price === '' || description === ''){
             toast.warning("Preecha todos os dados para atualizar o item.")
+            return
+        }
+
+        if(name.length > 45){
+            toast.warning("O nome do item não pode ter mais do que 45 caracteres.")
+            return
+        }
+        
+        if(price.length > 45){
+            toast.warning("Valor do item inválido.")
             return
         }
 
@@ -290,8 +300,6 @@ export function ModalItem({item, viewModalItem, updateMenu, handleViewModalItem}
   </Dialog>
 
   
-</Transition.Root>
-
-
+    </Transition.Root>
   )
 }

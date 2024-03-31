@@ -39,6 +39,11 @@ export function CategoryEdition({nameCategory, idCategory, updateMenu}: Category
             return
         }
 
+        if(name.length > 45){
+            toast.warning("O nome da categoria não pode ter mais do que 45 caracteres.")
+            return
+        }
+
         try{
             const apiClient = setupAPIClient();
             await apiClient.put('/category', {

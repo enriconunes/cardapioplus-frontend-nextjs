@@ -107,6 +107,16 @@ export function CollapseItem({ idCategory, updateMenu }: itemProps) {
             return
         }
 
+        if(name.length > 45){
+            toast.warning("O nome do item não pode ter mais do que 45 caracteres.")
+            return
+        }
+        
+        if(price.length > 45){
+            toast.warning("Valor do item inválido.")
+            return
+        }
+
         if(textCount > 255){
             toast.warning("A descrição ultrapassa o limite de caracteres. Reduza o tamanho do texto para continuar.")
             return

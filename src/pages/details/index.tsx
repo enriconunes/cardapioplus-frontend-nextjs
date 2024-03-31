@@ -3,10 +3,13 @@ import { canSSRAuth } from "@/src/utils/canSSRAuth"
 import Head from "next/head"
 import { useState } from "react"
 import Link from "next/link"
+import { FormEvent } from "react"
+import { toast } from "react-toastify"
 
 // icons
-import { MdDeliveryDining } from "react-icons/md"
+import { IoArrowBackCircleOutline } from "react-icons/io5";
 import { FaCamera } from "react-icons/fa";
+import { VscLoading } from "react-icons/vsc";
 
 // components
 import Header from "@/src/components/ui/Header"
@@ -14,6 +17,7 @@ import { FloatInput } from "@/src/components/ui/FloatInput"
 import Footer from "@/src/components/ui/Footer"
 import { Checkbox } from "@/src/components/ui/Checkbox"
 import { ButtonAdd } from "@/src/components/ui/ButtonAdd"
+import ModalAvatar from "@/src/components/ui/ModalAvatar"
 
 // data type from api.get('/restaurant')
 type RestaurantRequest = {
@@ -22,7 +26,7 @@ type RestaurantRequest = {
   address: string,
   contactNumber: string,
   instagramProfileName: string,
-  doDelivery: number,
+  doDelivery: boolean,
   profileURL: string,
   user_idUser: string,
   Schedule: {
@@ -52,13 +56,12 @@ interface restaurantDetailsProps{
 export default function Details({restaurantDetails}: restaurantDetailsProps){
 
     const [restaurant, setRestaraunt] = useState(restaurantDetails || null)
-    const [idRestaurant, setIdRestaurant] = useState(restaurant?.idRestaurant);
     const [name, setName] = useState(restaurant?.name);
     const [address, setAddress] = useState(restaurant?.address);
     const [contactNumber, setContactNumber] = useState(restaurant?.contactNumber);
     const [instagramProfileName, setInstagramProfileName] = useState(restaurant?.instagramProfileName);
     const [doDelivery, setDoDelivery] = useState(restaurant?.doDelivery);
-    const [schedule, setSchedule] = useState(restaurant?.Schedule);
+    const [profileURL, setProfileURL] = useState(restaurant?.profileURL)
 
     // schedule data
     const [monDescription, setMonDescription] = useState(restaurant?.Schedule?.monDescription || '');
@@ -76,7 +79,123 @@ export default function Details({restaurantDetails}: restaurantDetailsProps){
     const [sunDescription, setSunDescription] = useState(restaurant?.Schedule?.sunDescription || '');
     const [sunIsOpen, setSunIsOpen] = useState(restaurant?.Schedule?.sunIsOpen || false);
 
+    // loading button control
     const [loading, setLoading] = useState(false)
+    // loading uptade profile avatar
+    const [loadingAvatar, setLoadingAvatar] = useState(false)
+
+    // modal avatar control
+    const [viewModalAvatar, setViewModalAvatar] = useState(false)
+
+    function handleViewModalAvatar(){
+        setViewModalAvatar(!viewModalAvatar)
+    }
+
+    async function handleFormDescriptions(e:FormEvent){
+        e.preventDefault()
+
+        if(name === '' || contactNumber === '' || address === '' || instagramProfileName === ''){
+            toast.warning("Preencha todos os campos para atualizar as informações.")
+            return
+        }
+
+        if(name.length > 45){
+            toast.warning("O nome não pode ter mais do que 45 caracteres.")
+            return
+        } else if(address.length > 100){
+            toast.warning("O endereço não pode ter mais do que 100 caracteres.")
+            return
+        } else if(contactNumber.length > 45){
+            toast.warning("O número de telefone não pode ter mais do que 45 caracteres.")
+            return
+        } else if(instagramProfileName.length > 45){
+            toast.warning("O perfil do instagram não pode ter mais do que 45 caracteres.")
+            return
+        } 
+
+        setLoading(true)
+
+        try{
+
+            const apiClient = setupAPIClient();
+            await apiClient.put('/restaurant', {
+                name: name,
+                address: address,
+                contactNumber: contactNumber,
+                instagramProfileName: instagramProfileName,
+                doDelivery: doDelivery
+            });
+
+            setLoading(false)
+            toast.success("Informações atualizadas com sucesso!")
+
+        } catch(err){
+            toast.error("Erro ao atualizar informações. Tente novamente.")
+            setLoading(false)
+        }
+    }
+
+    // atualizar exibicao da imagem de perfil quando ela for trocada
+    // adiciona um atraso de 1 segundo para que a nova imagem seja atualizada no server
+    async function updateProfileDescriptions() {
+
+    setLoadingAvatar(true)
+
+    setTimeout(async () => {
+        const apiClient = setupAPIClient();
+        const response = await apiClient.get('/restaurant');
+        const restaurantDetails = response.data as RestaurantRequest;
+        setProfileURL(restaurantDetails.profileURL);
+
+        setLoadingAvatar(false)
+    }, 3000);
+}
+
+
+    async function handleFormSchedules(e:FormEvent){
+        e.preventDefault()
+
+        if(monDescription === '' || tueDescription === '' || wedDescription === '' || thuDescription === ''){
+            toast.warning("Preencha todos os campos para atualizar o horário de funcionamento.")
+            return
+        }
+
+        if(friDescription === '' || satDescription === '' || sunDescription === ''){
+            toast.warning("Preencha todos os campos para atualizar o horário de funcionamento.")
+            return
+        }
+
+        setLoading(true)
+
+        try{
+
+            const apiClient = setupAPIClient();
+            await apiClient.put('/schedule', {
+                monIsOpen: monIsOpen,
+                tueIsOpen: tueIsOpen,
+                wedIsOpen: wedIsOpen,
+                thuIsOpen: thuIsOpen,
+                friIsOpen: friIsOpen,
+                satIsOpen: satIsOpen,
+                sunIsOpen: sunIsOpen,
+                monDescription: monDescription,
+                tueDescription: tueDescription,
+                wedDescription: wedDescription,
+                thuDescription: thuDescription,
+                friDescription: friDescription,
+                satDescription: satDescription,
+                sunDescription: sunDescription,
+            });
+
+            toast.success("Informações atualizadas com sucesso!")
+            setLoading(false)
+
+        } catch(err){
+            toast.error("Erro ao atualizar informações. Tente novamente.")
+            setLoading(false)
+        }
+
+    }
 
     return(
         <>
@@ -91,6 +210,11 @@ export default function Details({restaurantDetails}: restaurantDetailsProps){
 
             <main className="px-3 max-w-xl mx-auto">
 
+                <div className="py-2 border border-gray-400 shadow-sm bg-gray-50 hover:bg-gray-100 h-8 flex items-center gap-x-1 w-fit px-3 mt-4 text-gray-600 text-sm"> 
+                    <IoArrowBackCircleOutline size={17}/>
+                    <Link href={'/dashboard'}>Voltar para o cardápio</Link>
+                </div>
+
                 <div className="px-4 flex flex-col items-center justify-center md:px-8 md:bg-white md:shadow-md mx-auto bg-white rounded-md shadow-md mt-4">
 
                     <div className="w-full flex flex-col -space-y-2 mt-4 md:text-2xl text-xl text-gray-700 drop-shadow-md">
@@ -101,24 +225,34 @@ export default function Details({restaurantDetails}: restaurantDetailsProps){
                     </div>
 
                     {/* avatar profile */}
-                    <div className="relative w-4/6 md:max-w-48 mt-5 hover:cursor-pointer hover:brightness-90">
+                    <div
+                    className="relative w-4/6 md:max-w-48 mt-5 hover:cursor-pointer hover:brightness-90"
+                    onClick={handleViewModalAvatar}>
                         <div className="rounded-full overflow-hidden border-4 border-gray-100">
                             <img
-                                src={restaurant?.profileURL}
+                                src={profileURL}
                                 alt="Imagem de perfil do restaurante"
                                 className="w-full"
                             />
                         </div>
                         <div className="absolute bottom-0 right-0 mr-[13%] bg-white border-2 p-3 rounded-full">
                             <span className="text-gray-800 text-lg font-bold">
-                                <FaCamera size={24}/>
+                                {loadingAvatar ? (
+                                    <VscLoading className="animate-spin" size={24}/>
+                                ):
+                                (
+                                    <FaCamera size={24}/>
+                                )}
+                                
                             </span>
                         </div>
                     </div>
 
 
                     {/* descriptions */}
-                    <form className="bg-blue-00 w-full flex flex-col mt-6 text-gray-800 pb-4">
+                    <form
+                    className="bg-blue-00 w-full flex flex-col mt-6 text-gray-800 pb-4"
+                    onSubmit={handleFormDescriptions}>
 
                         <FloatInput
                         type="text"
@@ -158,7 +292,8 @@ export default function Details({restaurantDetails}: restaurantDetailsProps){
 
                         <div className="mb-2">
                             <Checkbox
-                            checked={restaurant.doDelivery}>
+                            checked={doDelivery}
+                            onChange={() => setDoDelivery(!doDelivery)}>
                                 Delivery disponível
                             </Checkbox>
                         </div>
@@ -167,7 +302,7 @@ export default function Details({restaurantDetails}: restaurantDetailsProps){
                         loading={loading}
                         type="submit"
                         >
-                            Atualizar informações
+                            Salvar descrição
                         </ButtonAdd>
                         
                     </form>
@@ -183,73 +318,126 @@ export default function Details({restaurantDetails}: restaurantDetailsProps){
                     </div>
 
                     {/* schedules */}
-                    <form className="bg-blue-00 w-full flex flex-col mt-2 text-gray-800 pb-4">
+                    <form
+                    className="bg-blue-00 w-full flex flex-col mt-2 text-gray-800 pb-4"
+                    onSubmit={handleFormSchedules}>
 
                         <div className="text-gray-700">
 
                             <div>
-                                <p
-                                className="text-xl my-3">Segunda-feira</p>
-                                <Checkbox checked={restaurant.Schedule.monIsOpen}>Aberto</Checkbox>
+                                <p className="text-xl my-3">Segunda-feira</p>
+
+                                <Checkbox
+                                checked={monIsOpen}
+                                onChange={() => setMonIsOpen(!monIsOpen)}
+                                >
+                                    Aberto
+                                </Checkbox>
+
                                 <FloatInput
-                                value={restaurant.Schedule.monDescription}
+                                value={monDescription}
+                                onChange={(e) => {setMonDescription(e.target.value)}}
                                 id="mon">Descrição</FloatInput>
                             </div>
                             <hr />
                             <div>
-                                <p
-                                className="text-xl my-3">Terça-feira</p>
-                                <Checkbox checked={tueIsOpen}>Aberto</Checkbox>
+                                <p className="text-xl my-3">Terça-feira</p>
+
+                                <Checkbox
+                                checked={tueIsOpen}
+                                onChange={() => setTueIsOpen(!tueIsOpen)}
+                                >
+                                    Aberto
+                                </Checkbox>
+
                                 <FloatInput
                                 value={tueDescription}
+                                onChange={(e) => {setTueDescription(e.target.value)}}
                                 id="tue">Descrição</FloatInput>
                             </div>
                             <hr />
                             <div>
-                                <p
-                                className="text-xl my-3">Quarta-feira</p>
-                                <Checkbox checked={wedIsOpen}>Aberto</Checkbox>
+                                <p className="text-xl my-3">Quarta-feira</p>
+
+                                <Checkbox
+                                checked={wedIsOpen}
+                                onChange={() => setWedIsOpen(!wedIsOpen)}
+                                >
+                                    Aberto
+                                </Checkbox>
+
                                 <FloatInput
                                 value={wedDescription}
+                                onChange={(e) => {setWedDescription(e.target.value)}}
                                 id="wed">Descrição</FloatInput>
                             </div>
                             <hr />
                             <div>
-                                <p
-                                className="text-xl my-3">Quinta-feira</p>
-                                <Checkbox checked={thuIsOpen}>Aberto</Checkbox>
+                                <p className="text-xl my-3">Quinta-feira</p>
+
+                                <Checkbox
+                                checked={thuIsOpen}
+                                onChange={() => setThuIsOpen(!thuIsOpen)}
+                                >
+                                    Aberto
+                                </Checkbox>
+
                                 <FloatInput
                                 value={thuDescription}
+                                onChange={(e) => {setThuDescription(e.target.value)}}
                                 id="thu">Descrição</FloatInput>
                             </div>
                             <hr />
                             <div>
-                                <p
-                                className="text-xl my-3">Sexta-feira</p>
-                                <Checkbox checked={friIsOpen}>Aberto</Checkbox>
+                                <p className="text-xl my-3">Sexta-feira</p>
+
+                                <Checkbox
+                                checked={friIsOpen}
+                                onChange={() => setFriIsOpen(!friIsOpen)}
+                                >
+                                    Aberto
+                                </Checkbox>
+
                                 <FloatInput
                                 value={friDescription}
+                                onChange={(e) => {setFriDescription(e.target.value)}}
                                 id="fri">Descrição</FloatInput>
                             </div>
                             <hr />
                             <div>
-                                <p
-                                className="text-xl my-3">Sábado</p>
-                                <Checkbox checked={satIsOpen}>Aberto</Checkbox>
+                                <p className="text-xl my-3">Sábado</p>
+
+                                <Checkbox
+                                checked={satIsOpen}
+                                onChange={() => setSatIsOpen(!satIsOpen)}
+                                >
+                                    Aberto
+                                </Checkbox>
+
                                 <FloatInput
                                 value={satDescription}
+                                onChange={(e) => {setSatDescription(e.target.value)}}
                                 id="sat">Descrição</FloatInput>
                             </div>
                             <hr />
                             <div>
-                                <p
-                                className="text-xl my-3">Domingo</p>
-                                <Checkbox checked={sunIsOpen}>Aberto</Checkbox>
+                                <p className="text-xl my-3">Domingo</p>
+
+                                <Checkbox
+                                checked={sunIsOpen}
+                                onChange={() => setSunIsOpen(!sunIsOpen)}
+                                >
+                                    Aberto
+                                </Checkbox>
+
                                 <FloatInput
-                                value={sunDescription}id="sun">Descrição</FloatInput>
+                                value={sunDescription}
+                                onChange={(e) => {setSunDescription(e.target.value)}}
+                                id="sun">Descrição</FloatInput>
                             </div>
 
-                            <ButtonAdd>
+                            <ButtonAdd
+                            loading={loading}>
                                 Salvar horários de funcionamento
                             </ButtonAdd>
 
@@ -257,6 +445,14 @@ export default function Details({restaurantDetails}: restaurantDetailsProps){
                         
                     </form>
                 </div>
+                
+                <ModalAvatar
+                lastImageURL={restaurant?.profileURL}
+                viewModalAvatar={viewModalAvatar}
+                handleViewModalAvatar={handleViewModalAvatar}
+                updateProfileDescriptions={updateProfileDescriptions}
+                />
+
             </main>
 
             <Footer/>

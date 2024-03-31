@@ -1,5 +1,5 @@
 import { MdEdit } from "react-icons/md"
-import { ModalItem } from "../ModalItem"
+import ModalItem from "../ModalItem"
 import { useState } from "react"
 
 // tipagem de um item definido no dashboard

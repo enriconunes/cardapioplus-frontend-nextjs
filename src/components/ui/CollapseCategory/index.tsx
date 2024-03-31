@@ -31,6 +31,11 @@ export function CollapseCategory({updateMenu}: categoryProps) {
             return
         }
 
+        if(category.length > 45){
+            toast.warning("O nome da categoria não pode ter mais do que 45 caracteres.")
+            return
+        }
+
         setLoading(true) 
 
         try{

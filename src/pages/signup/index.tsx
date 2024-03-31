@@ -43,6 +43,21 @@ export default function Home() {
       return
     }
 
+    if(name.length > 60){
+      toast.warning("O nome não pode ultrapassar os 60 caracteres.")
+      return
+    }
+    
+    if (email.length > 60){
+      toast.warning("O email não pode ultrapassar os 60 caracteres.")
+      return
+    }
+    
+    if (password.length > 60){
+      toast.warning("A senha não pode ultrapassar os 60 caracteres.")
+      return
+    }
+
     setLoading(true)
 
     let data = {

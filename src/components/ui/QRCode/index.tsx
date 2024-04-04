@@ -38,9 +38,9 @@ export function QRCodeComponent({idUser, restaurantName, profileUrl}:QRCodeParam
                 >
                     <h3 className="font-medium text-lg mb-2 mt-0">Seja bem-vindo(a)!</h3>
 
-                    <Link target="_blank" href={`http://localhost:3000/cardapio?id=${idUser}`}>     
+                    <Link target="_blank" href={`http://localhost:3001/cardapio?id=${idUser}`}>     
                         <QRCode
-                        value={`http://localhost:3000/cardapio?id=${idUser}`}
+                        value={`http://localhost:3001/cardapio?id=${idUser}`}
                         size={200}        // the dimension of the QR code (number)
                         qrStyle="squares"    // type of qr code, wether you want dotted ones or the square ones
                         eyeRadius={0}    // radius of the promocode's eye

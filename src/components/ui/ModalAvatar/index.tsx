@@ -156,7 +156,7 @@ export default function ModalAvatar({lastImageURL, viewModalAvatar, handleViewMo
 
                         <button
                             type="button"
-                            className="w-full py-2 border border-gray-600 text-gray-600 shadow-sm font-medium bg-gray-50 hover:bg-gray-100 flex justify-center mt-2 sm:mt-0 sm:w-auto md:px-3"
+                            className="w-full py-2 border border-gray-600 text-gray-600 shadow-sm font-medium bg-gray-50 hover:bg-gray-100 flex justify-center mt-2 sm:mt-0 sm:w-auto md:px-3 md:ml-2 md:w-3/12"
                             ref={cancelButtonRef}
                             onClick={handleViewModalAvatar}
                         >

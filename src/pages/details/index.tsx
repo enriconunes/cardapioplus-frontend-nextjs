@@ -226,16 +226,16 @@ export default function Details({restaurantDetails}: restaurantDetailsProps){
 
                     {/* avatar profile */}
                     <div
-                    className="relative w-4/6 md:max-w-48 mt-5 hover:cursor-pointer hover:brightness-90"
+                    className="relative mt-5 hover:cursor-pointer hover:brightness-90"
                     onClick={handleViewModalAvatar}>
-                        <div className="rounded-full overflow-hidden border-4 border-gray-100">
+                        <div className="rounded-3xl w-44 h-44 md:w-48 md:h-48 overflow-hidden border-4 border-gray-100">
                             <img
                                 src={profileURL}
                                 alt="Imagem de perfil do restaurante"
-                                className="w-full"
+                                className="w-full h-full object-cover"
                             />
                         </div>
-                        <div className="absolute bottom-0 right-0 mr-[13%] bg-white border-2 p-3 rounded-full">
+                        <div className="absolute bottom-0 right-0 -mr-[10%] -mb-[6%] bg-white border-2 p-3 rounded-full">
                             <span className="text-gray-800 text-lg font-bold">
                                 {loadingAvatar ? (
                                     <VscLoading className="animate-spin" size={24}/>
@@ -245,7 +245,7 @@ export default function Details({restaurantDetails}: restaurantDetailsProps){
                                 )}
                                 
                             </span>
-                        </div>
+                        </div> 
                     </div>
 
 

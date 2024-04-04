@@ -134,11 +134,11 @@ export default function dashboard({restaurantDetails, menuDetails}: restaurantDe
 
 
                     {/* avatar profile */}
-                    <div className="w-4/6 md:max-w-48 mt-5 rounded-full overflow-hidden border-4 border-gray-100">
+                    <div className="w-40 h-40 md:w-48 md:h-48 mt-5 rounded-3xl overflow-hidden border-4 border-gray-100">
                         <img
                         src={restaurant?.profileURL}
                         alt="Imagem de perfil do restaurante"
-                        className="w-full"
+                        className="w-full h-full object-cover"
                         />
                     </div>
 

@@ -41,8 +41,9 @@ export default function ModalItem({item, viewModalItem, updateMenu, handleViewMo
     const [name, setName] = useState(item.name)
     const [price, setPrice] = useState(item.price)
     const [description, setDescription] = useState(item.description)
-    const [isVegan, setIsVegan] = useState(false)
-    const [isAvaliable, setIsAvaliable] = useState(false)
+    const [isVegan, setIsVegan] = useState(item.vegan === 1 ? true : false)
+
+    const [isAvaliable, setIsAvaliable] = useState(item.available === 1 ? true : false)
 
     // text area counter caracter
     const [textCount, setTextCount] = useState(description.length)
@@ -247,12 +248,14 @@ export default function ModalItem({item, viewModalItem, updateMenu, handleViewMo
 
               <Checkbox
                 value={isVegan}
+                checked={isVegan}
                 onChange={() => { setIsVegan(!isVegan) }}>
                 Item vegano
               </Checkbox>
 
               <Checkbox
                 value={isAvaliable}
+                checked={isAvaliable}
                 onChange={() => { setIsAvaliable(!isAvaliable) }}>
                 Está disponível
               </Checkbox>

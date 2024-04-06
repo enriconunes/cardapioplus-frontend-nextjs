@@ -3,9 +3,11 @@ import { useState, useEffect } from "react"
 import Head from "next/head";
 import Link from "next/link";
 import Image from "next/image";
+import { useRouter } from "next/router";
 
 // components
 import Footer from "@/src/components/ui/Footer";
+import ModalWishList from "@/src/components/ui/menuClient/ModalWishList";
 
 // icons
 import { MdDeliveryDining } from "react-icons/md";
@@ -16,9 +18,7 @@ import { LuVegan } from "react-icons/lu";
 import { FaShoppingCart } from "react-icons/fa";
 
 
-export default function cardapio(){
-
-    type MenuItem = {
+type MenuItem = {
     idItem: string;
     name: string;
     description: string;
@@ -85,26 +85,144 @@ type Restaurant = {
     Menu: Menu;
 }
 
+export type ItemWishList = {
+    idItem: string;
+    name: string;
+    description: string;
+    price: string;
+    vegan: number;
+    quantity: number
+}
+
+export default function cardapio(){
+
     const apiClient = setupAPIClient()
     const [restaurant, setRestaraunt] = useState<Restaurant>()
+    const router = useRouter();
+    const [wishItems, setWishItems] = useState<ItemWishList[]>([])
+    const [itemsCount, setItemsCount] = useState(0)
+    const [viewModalWishList, setViewModalWishList] = useState(false)
 
-    async function getData(){
-        const response = await apiClient.get("/menuclient?id=8f6acf04-ebec-48cd-b298-8b1e5b27ff22")
+    // fetch para receber menu do restaurante atraves do id
+    async function getData(id: string){
+        const response = await apiClient.get(`/menuclient?id=${id}`)
         const responseData = response.data as Restaurant
         setRestaraunt(responseData)
     }
 
-    useEffect(()=>{
-
-        getData()
-        
-    }, [])
-
-    function handleAddCart(teste){
-        console.log(restaurant)
-        console.log("DISPONIVEL: " + restaurant?.Menu.Categories[0].Items[0].avaliable)
+    // somar a quantidade de itens do carrinho
+    function counterItems(){
+        let sum = 0
+        for(let cnt = 0; cnt < wishItems.length; cnt++){
+            sum += wishItems[cnt].quantity
+        }
+        return sum
     }
 
+    // carregar menu do restaurante
+    useEffect(() => {
+        // recuperação do id da URL
+        const id = router.query.id as string;
+        if (id) {
+            getData(id);
+        }
+
+    }, [router.query.id]); // executado quando o id na URL for alterado
+
+    // atualizar quantidade de itens
+    useEffect(() => {
+        // atualização do itemsCount
+        setItemsCount(counterItems());
+    }, [wishItems]); // executado quando o estado wishItems for alterado
+
+
+    // adicionar novo item na lista
+    function handleAddItem(item: MenuItem) {
+
+        // Verificar se o item já existe na lista
+        const itemExists = wishItems.find(wishItem => wishItem.idItem === item.idItem);
+
+        if (itemExists) {
+            // Se o item já existir na lista, incrementar a quantidade
+            const updatedWishItems = wishItems.map(wishItem => {
+                if (wishItem.idItem === item.idItem) {
+                    return { ...wishItem, quantity: wishItem.quantity + 1 };
+                }
+                return wishItem;
+            });
+
+            setWishItems(updatedWishItems);
+
+            } else {
+                // Se o item não existir na lista, adicionar o novo item
+                const newItem: ItemWishList = {
+                    idItem: item.idItem,
+                    name: item.name,
+                    description: item.description,
+                    price: item.price,
+                    vegan: item.vegan,
+                    quantity: 1
+                };
+                setWishItems(prevItems => [...prevItems, newItem]);
+            }
+    }
+
+    // remover item da lista a partir do id
+    function handleRemoveItem(itemIdToRemove: string) {
+        // filtrar os itens para remover o item com o ID correspondente
+        const updatedWishItems = wishItems.filter(item => item.idItem !== itemIdToRemove);
+        // atualizar o estado com a nova lista de itens
+        setWishItems(updatedWishItems);
+    }
+
+    // alterar visibilidade do modal
+    function handleViewModalWishList(){
+        setViewModalWishList(!viewModalWishList)
+    }
+
+    function handleIncrementQuantity(itemIdToIncrement: string) {
+        // cria uma cópia do array de itens
+        const updatedWishItems = wishItems.map(item => {
+            // verifica se o item atual corresponde ao ID fornecido
+            if (item.idItem === itemIdToIncrement) {
+
+                // incrementa a quantidade do item atual
+                return {
+                    ...item,
+                    quantity: item.quantity + 1
+                };
+            }
+            // Se o item não corresponder ao id fornecido, retorna sem alterações
+            return item;
+        });
+        // atualiza o estado com a nova lista de itens
+        setWishItems(updatedWishItems);
+    }
+
+    function handleDecrementQuantity(itemIdToDecrement: string) {
+        // cria uma cópia do array de itens
+        const updatedWishItems = wishItems.map(item => {
+            // verifica se o item atual corresponde ao id fornecido
+            if (item.idItem === itemIdToDecrement) {
+
+                // garantir que a quantidade nao será menor ou igual a 0
+                // se a quantidade for 1, entao retorna o item sem nenhuma alteracao
+                if(item.quantity === 1){
+                    return item;
+                }
+
+                // Decrementar a quantidade do item atual
+                return {
+                    ...item,
+                    quantity: item.quantity - 1
+                };
+            }
+            // se o item não corresponder ao id fornecido, retorna sem alterações
+            return item;
+        });
+        // atualiza o estado com a nova lista de itens
+        setWishItems(updatedWishItems);
+    }
 
     return(
 
@@ -230,11 +348,11 @@ type Restaurant = {
                                                     )}
                                                     
                                                     {item.avaliable === 1 && (
-                                                        <span
-                                                        onClick={() => handleAddCart(item.avaliable)}
-                                                        className="bg-red-700 px-3 py-1 text-gray-100 rounded-md hover:cursor-pointer hover:scale-110 duration-200 flex items-center justify-center">
+                                                        <button
+                                                        onClick={() => handleAddItem(item)}
+                                                        className="bg-red-700 px-3 py-1 text-gray-100 rounded-md hover:cursor-pointer hover:scale-110 flex items-center justify-center transition-colors duration-200 focus:outline-none active:bg-green-700">
                                                             <FaPlus  />
-                                                        </span>
+                                                        </button>
                                                     )}
                                                 </div>
                                             </div>                                            
@@ -259,12 +377,22 @@ type Restaurant = {
                     </div>
                 </footer>
 
+                {/* wishlist - carrinho de compras */}
                 <div
-                className="w-full rounded-t-md bg-red-700 h-10 fixed bottom-0 flex items-center justify-center text-gray-100 font-medium z-20 hover:cursor-pointer"
+                onClick={()=>handleViewModalWishList()}
+                className="w-full fixed bottom-0 rounded-t-md bg-red-700 h-10 flex items-center justify-center text-gray-100 font-medium z-20 hover:cursor-pointer"
                 >
-                    <span>Seu carrinho (3)</span> <FaShoppingCart className="ml-2" size={15}/>
+                    <span>Seu carrinho ({itemsCount})</span> <FaShoppingCart className="ml-2" size={15}/>
                 </div>
 
+                <ModalWishList
+                handleViewModalWishList={handleViewModalWishList}
+                wishItems={wishItems}
+                viewModalWishList={viewModalWishList}
+                handleRemoveItem={handleRemoveItem}
+                handleDecrementQuantity={handleDecrementQuantity}
+                handleIncrementQuantity={handleIncrementQuantity}
+                />
             </div> 
 
         </>

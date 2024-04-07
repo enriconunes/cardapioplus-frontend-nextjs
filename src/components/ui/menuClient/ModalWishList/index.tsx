@@ -10,9 +10,14 @@ import { ItemWishList } from '@/src/pages/cardapio'
 import { FiImage } from 'react-icons/fi'
 import { FaRegTrashAlt } from "react-icons/fa";
 
+// components
+import { FloatInput } from '../../FloatInput'
+
 
 interface WishListProps{
     viewModalWishList: boolean,
+    totalPrice: string,
+    doDelivery: number,
     handleRemoveItem: (id: string) => void,
     handleIncrementQuantity: (id: string) => void,
     handleDecrementQuantity: (id: string) => void,
@@ -20,15 +25,32 @@ interface WishListProps{
     wishItems: ItemWishList[]
 }
 
-export default function ModalWishList({viewModalWishList, wishItems, handleViewModalWishList, handleRemoveItem, handleDecrementQuantity, handleIncrementQuantity}: WishListProps){
+export default function ModalWishList({viewModalWishList, wishItems, totalPrice, handleViewModalWishList, handleRemoveItem, handleDecrementQuantity, handleIncrementQuantity, doDelivery}: WishListProps){
 
 
     // loadin button control
     const [loading, setLoading] = useState(false)
-    const [totalPrice, setTotalPrice] = useState(0)
 
+    // radio button selected - order type
+    const [orderType, setOrderType] = useState("store_order");
+
+    // input texts
+    const [tableNumber, setTableNumber] = useState("")
+    const [clientAddress, setClientAddress] = useState("")
+
+    // completing shopping cart 
     async function handleSubmit(e:FormEvent){
         e.preventDefault()
+
+        if(orderType === 'store_order' && tableNumber === ''){
+            toast.warning("Digite o número da sua mesa para finalizar o pedido.")
+            return
+        }
+
+        if(orderType === 'delivery_order' && clientAddress === ''){
+            toast.warning("Digite o seu endereço para finalizar o pedido.")
+            return
+        }
 
         setLoading(true)
 
@@ -132,27 +154,105 @@ export default function ModalWishList({viewModalWishList, wishItems, handleViewM
                                 ))
                                 ):(
                                     <div
-                                    className='bg-white rounded-md shadow-md p-2 mb-3 text-gray-700 flex'>
-                                        Você ainda não adicionou nenhum item ao seu pedido...
+                                    className='bg-white text-center rounded-md shadow-md p-2 mb-3 text-gray-700 flex'>
+                                        O seu carrinho ainda está vazio... Adicione pelo menos um item para finalizar o pedido.
                                     </div>
                                 )}
                                 
                             </div>
+
+                            {/* order options - input texts */}
+                            {wishItems.length > 0 && (
+                                <div className='w-full mt-2'>
+                                    <div className="w-full flex flex-col">
+                                        <label className="inline-flex items-center -mb-2">
+                                            <input
+                                            type="radio"
+                                            className="form-radio text-green-500 outline-none"
+                                            name="order"
+                                            value="store_order"
+                                            checked={orderType === "store_order"}
+                                            onChange={(e) => setOrderType(e.target.value)}
+                                            />
+                                            <span className="ml-2">Fazer pedido no estabelecimento</span>
+                                        </label>
+                                        <label className={`inline-flex items-center mt-2 ${doDelivery === 0 ? "text-gray-400" : ""}`}>
+                                            <input
+                                            disabled={doDelivery === 0}
+                                            type="radio" className="form-radio text-green-500 outline-none"
+                                            name="order"
+                                            value="delivery_order"
+                                            checked={orderType === "delivery_order"}
+                                            onChange={(e) => setOrderType(e.target.value)}
+                                            />
+                                            <span className="ml-2">
+                                                Fazer pedido para delivery
+                                                {doDelivery === 0 && (
+                                                    <span> (indisponível)</span>
+                                                )}
+                                            </span>
+                                        </label>
+                                    </div>
+                                    
+                                    <div className='mt-3'>
+                                        {orderType === "store_order" ? (
+                                            <FloatInput
+                                            type="text"
+                                            id="table"
+                                            value={tableNumber}
+                                            onChange={(e) => setTableNumber(e.target.value)}
+                                            >
+                                                Digite o número da mesa
+                                            </FloatInput>
+                                        ):(
+                                            <FloatInput
+                                            type="text"
+                                            id="table"
+                                            value={clientAddress}
+                                            onChange={(e) => setClientAddress(e.target.value)}
+                                            >
+                                                Digite o seu endereço
+                                            </FloatInput>
+                                        )}
+                                        <div className='-mt-2'>
+                                            <FloatInput
+                                            type="text"
+                                            id="table"
+                                            value={clientAddress}
+                                            onChange={(e) => setClientAddress(e.target.value)}
+                                            >
+                                                Adicionar observação (opcional)
+                                            </FloatInput>
+                                        </div>
+                                        
+                                    </div>
+
+                                    <div className='text-gray-700 -mt-2'>
+                                        <span className='font-medium text-lg'>Total: </span> R$ {totalPrice}
+                                    </div>
+
+                                </div>
+                            )}
+                            
+
+                            {/* buttons */}
                             <div className={`py-3 sm:flex md:justify-end sm:flex-row md:px-0 sm:px-6 w-full`}>
 
-                            <ButtonAdd
-                            loading={loading}
-                            type='submit'>
-                                Atualizar perfil
-                            </ButtonAdd>
-
+                            {wishItems.length > 0 && (
+                                <ButtonAdd
+                                loading={loading}
+                                type='submit'>
+                                    Finalizar pedido
+                                </ButtonAdd>
+                            )}
+                            
                             <button
                                 type="button"
                                 className="w-full py-2 border border-gray-600 text-gray-600 shadow-sm font-medium bg-gray-50 hover:bg-gray-100 flex justify-center mt-2 sm:mt-0 sm:w-auto md:px-3 md:ml-2 md:w-3/12"
                                 ref={cancelButtonRef}
                                 onClick={handleViewModalWishList}
                             >
-                                Cancelar
+                                Voltar para o cardápio
                             </button>
                             </div>
 

@@ -85,7 +85,7 @@ export default function ModalItem({item, viewModalItem, updateMenu, handleViewMo
             return
         }
         
-        if(price.length > 45){
+        if(price.length > 10){
             toast.warning("Valor do item inválido.")
             return
         }

@@ -97,10 +97,12 @@ export type ItemWishList = {
 export default function cardapio(){
 
     const apiClient = setupAPIClient()
-    const [restaurant, setRestaraunt] = useState<Restaurant>()
     const router = useRouter();
+
+    const [restaurant, setRestaraunt] = useState<Restaurant>()
     const [wishItems, setWishItems] = useState<ItemWishList[]>([])
     const [itemsCount, setItemsCount] = useState(0)
+    const [totalPrice, setTotalPrice] = useState("")
     const [viewModalWishList, setViewModalWishList] = useState(false)
 
     // fetch para receber menu do restaurante atraves do id
@@ -119,6 +121,16 @@ export default function cardapio(){
         return sum
     }
 
+    // somar o valor total do carrinho
+    // o valor é retornado como string pois não será feito operaçoes com ele
+    function sumTotal(){
+        let sum = 0
+        for(let cnt = 0; cnt < wishItems.length; cnt++){
+            sum += (parseFloat(wishItems[cnt].price) * wishItems[cnt].quantity)
+        }
+        return sum.toFixed(2); // limital o valor a duas casas decimais
+    }
+
     // carregar menu do restaurante
     useEffect(() => {
         // recuperação do id da URL
@@ -129,10 +141,13 @@ export default function cardapio(){
 
     }, [router.query.id]); // executado quando o id na URL for alterado
 
-    // atualizar quantidade de itens
+    // atualizar quantidade de itens e o preco total
     useEffect(() => {
         // atualização do itemsCount
         setItemsCount(counterItems());
+
+        // atualizacao do preco
+        setTotalPrice(sumTotal())
     }, [wishItems]); // executado quando o estado wishItems for alterado
 
 
@@ -272,8 +287,8 @@ export default function cardapio(){
 
                         {/* second row */}
                         <div className="space-y-1 py-4">
-                            <div className="flex items-center"><IoIosCall size={21}/> {restaurant?.contactNumber}</div>
-                            <div className="flex items-center"><FaInstagram size={19}/> {restaurant?.instagramProfileName}</div>
+                            <div className="flex items-center"><IoIosCall className="mr-1" size={21}/> {restaurant?.contactNumber}</div>
+                            <div className="flex items-center"><FaInstagram className="mr-2" size={19}/> {restaurant?.instagramProfileName}</div>
 
                             <div
                             className={`flex items-center gap-x-1 text ${restaurant?.doDelivery ? "text-green-700" : "text-red-700"}`}
@@ -388,6 +403,8 @@ export default function cardapio(){
                 <ModalWishList
                 handleViewModalWishList={handleViewModalWishList}
                 wishItems={wishItems}
+                totalPrice={totalPrice}
+                doDelivery={restaurant?.doDelivery}
                 viewModalWishList={viewModalWishList}
                 handleRemoveItem={handleRemoveItem}
                 handleDecrementQuantity={handleDecrementQuantity}

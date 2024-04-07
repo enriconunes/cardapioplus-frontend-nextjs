@@ -10,7 +10,7 @@ export function ButtonAdd({children, loading, ...rest}: buttonProps){
     return(
 
         <button
-            className="w-full py-2 border border-green-600 text-green-600 shadow-sm font-medium bg-green-50 hover:bg-green-100 flex justify-center"
+            className="w-full py-2 border border-green-600 text-green-600 shadow-sm font-medium bg-green-50 hover:bg-green-100 flex items-center justify-center"
             disabled={loading}
             {...rest}
         >

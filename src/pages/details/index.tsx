@@ -27,6 +27,7 @@ type RestaurantRequest = {
   contactNumber: string,
   instagramProfileName: string,
   doDelivery: boolean,
+  deliveryFee: string,
   profileURL: string,
   user_idUser: string,
   Schedule: {
@@ -61,6 +62,7 @@ export default function Details({restaurantDetails}: restaurantDetailsProps){
     const [contactNumber, setContactNumber] = useState(restaurant?.contactNumber);
     const [instagramProfileName, setInstagramProfileName] = useState(restaurant?.instagramProfileName);
     const [doDelivery, setDoDelivery] = useState(restaurant?.doDelivery);
+    const [deliveryFee, setDeliveryFee] = useState(restaurant?.deliveryFee);
     const [profileURL, setProfileURL] = useState(restaurant?.profileURL)
 
     // schedule data
@@ -111,6 +113,9 @@ export default function Details({restaurantDetails}: restaurantDetailsProps){
         } else if(instagramProfileName.length > 45){
             toast.warning("O perfil do instagram não pode ter mais do que 45 caracteres.")
             return
+        } else if(deliveryFee.length > 10){
+            toast.warning("O valor da taxa de entrega não pode ultrapassar 10 caracteres.")
+            return
         } 
 
         setLoading(true)
@@ -123,7 +128,8 @@ export default function Details({restaurantDetails}: restaurantDetailsProps){
                 address: address,
                 contactNumber: contactNumber,
                 instagramProfileName: instagramProfileName,
-                doDelivery: doDelivery
+                doDelivery: doDelivery,
+                deliveryFee: deliveryFee
             });
 
             setLoading(false)
@@ -288,6 +294,17 @@ export default function Details({restaurantDetails}: restaurantDetailsProps){
                         onChange={(e)=>setInstagramProfileName(e.target.value)}
                         >
                             Perfil do Instagram
+                        </FloatInput>
+
+                        <FloatInput
+                        type="number"
+                        step="0.01"
+                        min="0"
+                        id="deliveryFee"
+                        value={deliveryFee}
+                        onChange={(e)=>setDeliveryFee(e.target.value)}
+                        >
+                            Valor da taxa de entrega (delivery)
                         </FloatInput>
 
                         <div className="mb-2">

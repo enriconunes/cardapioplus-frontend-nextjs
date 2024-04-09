@@ -18,6 +18,9 @@ interface WishListProps{
     viewModalWishList: boolean,
     totalPrice: string,
     doDelivery: number,
+    deliveryFee: string,
+    idRestaurant: string,
+    clearWishItems: () => void,
     handleRemoveItem: (id: string) => void,
     handleIncrementQuantity: (id: string) => void,
     handleDecrementQuantity: (id: string) => void,
@@ -25,39 +28,87 @@ interface WishListProps{
     wishItems: ItemWishList[]
 }
 
-export default function ModalWishList({viewModalWishList, wishItems, totalPrice, handleViewModalWishList, handleRemoveItem, handleDecrementQuantity, handleIncrementQuantity, doDelivery}: WishListProps){
+export default function ModalWishList({viewModalWishList, wishItems, totalPrice, handleViewModalWishList, handleRemoveItem, handleDecrementQuantity, handleIncrementQuantity, clearWishItems, doDelivery, deliveryFee, idRestaurant}: WishListProps){
 
 
     // loadin button control
     const [loading, setLoading] = useState(false)
 
     // radio button selected - order type
-    const [orderType, setOrderType] = useState("store_order");
+    const [orderType, setOrderType] = useState("store");
 
     // input texts
     const [tableNumber, setTableNumber] = useState("")
-    const [clientAddress, setClientAddress] = useState("")
+    const [clientAddress, setClientAddress] = useState<any>(""); //<any> pois havia o erro Property 'length' does not exist on type 'never'.
+    const [clientContact, setClientContact] = useState("")
+    const [note, setNote] = useState("")
 
     // completing shopping cart 
     async function handleSubmit(e:FormEvent){
         e.preventDefault()
 
-        if(orderType === 'store_order' && tableNumber === ''){
-            toast.warning("Digite o número da sua mesa para finalizar o pedido.")
+        if(orderType === 'store' && tableNumber === ''){
+            toast.warning("Digite o número ou outra identificação da sua mesa para finalizar o pedido.")
             return
         }
 
-        if(orderType === 'delivery_order' && clientAddress === ''){
-            toast.warning("Digite o seu endereço para finalizar o pedido.")
-            return
+        if(orderType === 'delivery'){
+
+            if(clientAddress === ''){
+                toast.warning("Digite o seu endereço para finalizar o pedido.")
+                return
+            }
+
+            if(clientAddress.length > 100){
+                toast.warning(`O seu endereço deve ter no máximo 100 caracteres e tem ${clientAddress.length}.`)
+                return
+            }
+
+            if (clientContact.length > 45) {
+                toast.warning(`O número para contato não pode ter mais do que 45 caracteres.`)
+                return
+            } 
         }
+
+        if(note.length > 255){
+                toast.warning(`A observação deve ter no máximo 255 caracteres e tem ${note.length}.`)
+                return
+            }
 
         setLoading(true)
 
         try{
 
+            // cria uma nova lista contendo apenas o id e a quantidade dos itens da lista
+            const items = wishItems.map(item => ({
+                idItem: item.idItem,
+                quantity: item.quantity
+            }));
+
+            const apiClient = setupAPIClient()
+            await apiClient.post('/order', {
+                typeOrder: orderType,
+                totalPrice: totalPrice,
+                note: note,
+                table: tableNumber,
+                clientContact: clientContact,
+                clientAddress: clientAddress,
+                idRestaurant: idRestaurant,
+                items: items
+            })
+
             setLoading(false)
-            toast.success("Imagem de perfil atualizada.")
+
+            toast.success("Pedido finalizado com sucesso!")
+
+            // limpar campos do formulario
+            setNote('')
+            setClientContact('')
+            setClientAddress('')
+            setTableNumber('')
+
+            // limpar lista de itens
+            clearWishItems()
 
             // fechar modal
             handleViewModalWishList()            
@@ -65,10 +116,8 @@ export default function ModalWishList({viewModalWishList, wishItems, totalPrice,
 
         } catch(err){
             setLoading(false)
-            toast.error("Erro ao atualizar imagem de perfil. Tente novamente.")
+            toast.error("Erro ao finalizar pedido: " + err)
         }
-        
-
         
     }
 
@@ -170,8 +219,8 @@ export default function ModalWishList({viewModalWishList, wishItems, totalPrice,
                                             type="radio"
                                             className="form-radio text-green-500 outline-none"
                                             name="order"
-                                            value="store_order"
-                                            checked={orderType === "store_order"}
+                                            value="store"
+                                            checked={orderType === "store"}
                                             onChange={(e) => setOrderType(e.target.value)}
                                             />
                                             <span className="ml-2">Fazer pedido no estabelecimento</span>
@@ -181,8 +230,8 @@ export default function ModalWishList({viewModalWishList, wishItems, totalPrice,
                                             disabled={doDelivery === 0}
                                             type="radio" className="form-radio text-green-500 outline-none"
                                             name="order"
-                                            value="delivery_order"
-                                            checked={orderType === "delivery_order"}
+                                            value="delivery"
+                                            checked={orderType === "delivery"}
                                             onChange={(e) => setOrderType(e.target.value)}
                                             />
                                             <span className="ml-2">
@@ -195,7 +244,7 @@ export default function ModalWishList({viewModalWishList, wishItems, totalPrice,
                                     </div>
                                     
                                     <div className='mt-3'>
-                                        {orderType === "store_order" ? (
+                                        {orderType === "store" ? (
                                             <FloatInput
                                             type="text"
                                             id="table"
@@ -205,30 +254,63 @@ export default function ModalWishList({viewModalWishList, wishItems, totalPrice,
                                                 Digite o número da mesa
                                             </FloatInput>
                                         ):(
-                                            <FloatInput
-                                            type="text"
-                                            id="table"
-                                            value={clientAddress}
-                                            onChange={(e) => setClientAddress(e.target.value)}
-                                            >
-                                                Digite o seu endereço
-                                            </FloatInput>
+                                            <div>
+                                                <div className='-mb-2'>
+                                                    <FloatInput
+                                                    type="text"
+                                                    id="address"
+                                                    value={clientAddress}
+                                                    onChange={(e) => setClientAddress(e.target.value)}
+                                                    >
+                                                        Digite o seu endereço
+                                                    </FloatInput>
+                                                </div>
+
+                                                <FloatInput
+                                                type="text"
+                                                id="contact"
+                                                value={clientContact}
+                                                onChange={(e) => setClientContact(e.target.value)}
+                                                >
+                                                    Digite um número para contato
+                                                </FloatInput>
+                                            </div>
                                         )}
                                         <div className='-mt-2'>
                                             <FloatInput
                                             type="text"
-                                            id="table"
-                                            value={clientAddress}
-                                            onChange={(e) => setClientAddress(e.target.value)}
+                                            id="note"
+                                            value={note}
+                                            onChange={(e) => setNote(e.target.value)}
                                             >
                                                 Adicionar observação (opcional)
                                             </FloatInput>
                                         </div>
+
+                                        <div className='w-full text-center text-gray-600 -mt-2 mb-3 text-sm'>
+                                            *Tempo médio de entrega: 45 minutos
+                                        </div>
                                         
                                     </div>
 
-                                    <div className='text-gray-700 -mt-2'>
-                                        <span className='font-medium text-lg'>Total: </span> R$ {totalPrice}
+                                    <div className='text-gray-700'>
+                                        {orderType === "store" ? (
+                                            <div><span className='font-medium text-lg'>Total:</span> R$ {totalPrice}</div>
+                                        ):(
+                                            <div className='flex flex-col'>
+                                                <span className='font-medium text-sm text-gray-500'>Subtotal:
+                                                    <span className='font-normal'> R$ {totalPrice}</span>
+                                                </span>
+                                                <span className='font-medium text-sm text-gray-500'>Taxa de entrega:
+                                                    <span className='font-normal'> R$ {deliveryFee}</span>
+                                                </span>
+                                                <span className='font-medium text-lg'>Total:
+                                                    <span className='font-normal'> R$ {
+                                                        (parseFloat(totalPrice) + parseFloat(deliveryFee)).toFixed(2)
+                                                    }</span>
+                                                </span>
+                                            </div>
+                                        )}
                                     </div>
 
                                 </div>
@@ -238,22 +320,23 @@ export default function ModalWishList({viewModalWishList, wishItems, totalPrice,
                             {/* buttons */}
                             <div className={`py-3 sm:flex md:justify-end sm:flex-row md:px-0 sm:px-6 w-full`}>
 
-                            {wishItems.length > 0 && (
-                                <ButtonAdd
-                                loading={loading}
-                                type='submit'>
-                                    Finalizar pedido
-                                </ButtonAdd>
-                            )}
-                            
-                            <button
-                                type="button"
-                                className="w-full py-2 border border-gray-600 text-gray-600 shadow-sm font-medium bg-gray-50 hover:bg-gray-100 flex justify-center mt-2 sm:mt-0 sm:w-auto md:px-3 md:ml-2 md:w-3/12"
-                                ref={cancelButtonRef}
-                                onClick={handleViewModalWishList}
-                            >
-                                Voltar para o cardápio
-                            </button>
+                                <button
+                                    type="button"
+                                    className="w-full md:w-1/2 whitespace-nowrap py-2 border border-gray-600 text-gray-600 shadow-sm font-medium bg-gray-50 hover:bg-gray-100 flex justify-center mb-2 md:mb-0 sm:mt-0 sm:w-auto md:px-3 md:mr-2"
+                                    ref={cancelButtonRef}
+                                    onClick={handleViewModalWishList}
+                                    >
+                                    <p>Voltar para o cardápio</p>
+                                </button>
+
+                                {wishItems.length > 0 && (
+                                    <ButtonAdd
+                                    loading={loading}
+                                    type='submit'>
+                                        Finalizar pedido
+                                    </ButtonAdd>
+                                )}
+
                             </div>
 
                         </form>

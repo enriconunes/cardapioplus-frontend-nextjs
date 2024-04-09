@@ -8,6 +8,7 @@ import { useRouter } from "next/router";
 // components
 import Footer from "@/src/components/ui/Footer";
 import ModalWishList from "@/src/components/ui/menuClient/ModalWishList";
+import { ModalSchedule } from "@/src/components/ui/menuClient/ModalSchedule";
 
 // icons
 import { MdDeliveryDining } from "react-icons/md";
@@ -48,7 +49,7 @@ type Menu = {
     Categories: MenuCategory[];
 }
 
-type Schedule = {
+export type Schedule = {
     idSchedule: string;
     monIsOpen: boolean;
     tueIsOpen: boolean;
@@ -77,6 +78,7 @@ type Restaurant = {
     contactNumber: string;
     instagramProfileName: string;
     doDelivery: number;
+    deliveryFee: string;
     profileURL: string;
     createdAt: string;
     updatedAt: string;
@@ -103,7 +105,9 @@ export default function cardapio(){
     const [wishItems, setWishItems] = useState<ItemWishList[]>([])
     const [itemsCount, setItemsCount] = useState(0)
     const [totalPrice, setTotalPrice] = useState("")
+
     const [viewModalWishList, setViewModalWishList] = useState(false)
+    const [viewModalSchedule, setViewModalSchedule] = useState(false)
 
     // fetch para receber menu do restaurante atraves do id
     async function getData(id: string){
@@ -130,26 +134,6 @@ export default function cardapio(){
         }
         return sum.toFixed(2); // limital o valor a duas casas decimais
     }
-
-    // carregar menu do restaurante
-    useEffect(() => {
-        // recuperação do id da URL
-        const id = router.query.id as string;
-        if (id) {
-            getData(id);
-        }
-
-    }, [router.query.id]); // executado quando o id na URL for alterado
-
-    // atualizar quantidade de itens e o preco total
-    useEffect(() => {
-        // atualização do itemsCount
-        setItemsCount(counterItems());
-
-        // atualizacao do preco
-        setTotalPrice(sumTotal())
-    }, [wishItems]); // executado quando o estado wishItems for alterado
-
 
     // adicionar novo item na lista
     function handleAddItem(item: MenuItem) {
@@ -190,11 +174,17 @@ export default function cardapio(){
         setWishItems(updatedWishItems);
     }
 
-    // alterar visibilidade do modal
+    // alterar visibilidade do modal - Carrinho de compras
     function handleViewModalWishList(){
         setViewModalWishList(!viewModalWishList)
     }
 
+    // alterar visibilidade do modal - Horarios de funcionamento
+    function handleViewModalSchedule(){
+        setViewModalSchedule(!viewModalSchedule)
+    }
+
+    // incrementar quantidade de um item a partir do id
     function handleIncrementQuantity(itemIdToIncrement: string) {
         // cria uma cópia do array de itens
         const updatedWishItems = wishItems.map(item => {
@@ -214,6 +204,7 @@ export default function cardapio(){
         setWishItems(updatedWishItems);
     }
 
+    // decrementar quantidade de um item a partir do id
     function handleDecrementQuantity(itemIdToDecrement: string) {
         // cria uma cópia do array de itens
         const updatedWishItems = wishItems.map(item => {
@@ -239,6 +230,30 @@ export default function cardapio(){
         setWishItems(updatedWishItems);
     }
 
+    // limpar lista de itens
+    function clearWishItems(){
+        setWishItems([])
+    }
+
+    // carregar menu do restaurante
+    useEffect(() => {
+        // recuperação do id da URL
+        const id = router.query.id as string;
+        if (id) {
+            getData(id);
+        }
+
+    }, [router.query.id]); // executado quando o id na URL for alterado
+
+    // atualizar quantidade de itens e o preco total
+    useEffect(() => {
+        // atualização do itemsCount
+        setItemsCount(counterItems());
+
+        // atualizacao do preco
+        setTotalPrice(sumTotal())
+    }, [wishItems]); // executado quando o estado wishItems for alterado
+
     return(
 
         <>
@@ -252,6 +267,7 @@ export default function cardapio(){
             <div className="w-full text-gray-700">
                 {/* banner */}
                 <div className="w-full h-36 bg-banner bg-cover bg-center">
+                    
                 </div>
  
                 {/* main content */}
@@ -280,7 +296,10 @@ export default function cardapio(){
                             </div>
 
                             {/* schedule */}
-                            <button className="px-8 py-[3px] bg-green-700 text-white rounded-md mt-3 font-medium">
+                            <button
+                            onClick={ handleViewModalSchedule }
+                            className="px-8 py-[3px] bg-green-700 text-white rounded-md mt-3 font-medium"
+                            >
                                 Ver horários
                             </button>
                         </div>
@@ -293,7 +312,7 @@ export default function cardapio(){
                             <div
                             className={`flex items-center gap-x-1 text ${restaurant?.doDelivery ? "text-green-700" : "text-red-700"}`}
                             >
-                                <MdDeliveryDining size={21}/> Delivery indisponível
+                                <MdDeliveryDining size={21}/> {restaurant?.doDelivery ? "Delivery disponível" : "Delivery Indisponível"}`
                             </div> 
                         </div>
 
@@ -405,10 +424,19 @@ export default function cardapio(){
                 wishItems={wishItems}
                 totalPrice={totalPrice}
                 doDelivery={restaurant?.doDelivery}
+                deliveryFee={restaurant?.deliveryFee}
+                idRestaurant={restaurant?.idRestaurant}
                 viewModalWishList={viewModalWishList}
                 handleRemoveItem={handleRemoveItem}
                 handleDecrementQuantity={handleDecrementQuantity}
                 handleIncrementQuantity={handleIncrementQuantity}
+                clearWishItems={clearWishItems}
+                />
+
+                <ModalSchedule
+                schedule={restaurant?.Schedule}
+                handleViewModalSchedule={handleViewModalSchedule}
+                viewModalSchedule={viewModalSchedule}
                 />
             </div> 
 

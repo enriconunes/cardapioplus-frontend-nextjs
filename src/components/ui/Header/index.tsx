@@ -1,13 +1,14 @@
 import logo from '../../../../public/logo.png'
 import Image from 'next/image'
 import Link from 'next/link'
+import { useState, useContext } from 'react';
+import { AuthContext } from '@/src/contexts/AuthContext';
+
+// icons
 import { IoMdMenu } from "react-icons/io";
 import { IoMdClose } from "react-icons/io";
 import { MdLogout } from "react-icons/md";
-
-
-import { useState, useContext } from 'react';
-import { AuthContext } from '@/src/contexts/AuthContext';
+import { GrNotes } from "react-icons/gr";
 
 export default function Header(){
 
@@ -53,6 +54,16 @@ export default function Header(){
             <div className={`bg-white h-14 md:h-20 shadow-md flex items-center justify-between px-4 ${menuView ? "" : "hidden"}`}>
                     
                 <ul>
+                    <li>
+                        <Link
+                        href={"/orders"}
+                        className='flex items-center gap-x-1'
+                        >
+                            Novos pedidos
+                            <GrNotes
+                            className='mt-1'/>
+                        </Link>
+                    </li>
                     <li>
                         <button
                         className='flex items-center gap-x-1'

@@ -193,7 +193,7 @@ export default function dashboard({restaurantDetails, menuDetails}: restaurantDe
                         </div>
 
 
-                        {menu?.Categories.length == 0 && (
+                        {menu?.Categories?.length == 0 && (
                             <div className="items-center font-medium text-cyan-600 w-full justify-center py-2 border border-cyan-600  shadow-sm bg-cyan-50 px-3  sm:w-auto md:mx-0 mt-2 mb-3">Seu cardápio ainda está vazio. Comece adicionando uma nova categoria de alimentos para cadastrar os produtos do seu restaurante.</div>
                         )}
                         
@@ -201,7 +201,7 @@ export default function dashboard({restaurantDetails, menuDetails}: restaurantDe
                         <CollapseCategory updateMenu={updateMenu}/>
 
                         {/* begin of list */}
-                        {menu?.Categories.map(category => (
+                        {menu?.Categories?.map(category => (
                             <div key={category.idCategory}>
                                 
                                 {/* category name and update button */}
@@ -251,14 +251,22 @@ export const getServerSideProps = canSSRAuth(async(ctx) => {
 
     const apiClient = setupAPIClient(ctx)
 
-    const restaurantDetails = await apiClient.get('/restaurant')
+    let restaurantDetails;
+    let menuDetails;
 
-    const menuDetails = await apiClient.get('/menu')
+    try{
+        restaurantDetails = await apiClient.get('/restaurant')
+        menuDetails = await apiClient.get('/menu')
+    } catch(err){
+        // Definir restaurantDetails e menuDetails como vazio em caso de erro
+        restaurantDetails = {}
+        menuDetails = {}
+    }
 
     return{
         props: {
-            restaurantDetails: restaurantDetails.data,
-            menuDetails: menuDetails.data
+            restaurantDetails: restaurantDetails.data || {},
+            menuDetails: menuDetails.data || {}
         }
     }
 })

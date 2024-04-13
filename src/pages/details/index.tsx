@@ -28,6 +28,7 @@ type RestaurantRequest = {
   instagramProfileName: string,
   doDelivery: boolean,
   deliveryFee: string,
+  deliveryTime: string,
   profileURL: string,
   user_idUser: string,
   Schedule: {
@@ -63,6 +64,7 @@ export default function Details({restaurantDetails}: restaurantDetailsProps){
     const [instagramProfileName, setInstagramProfileName] = useState(restaurant?.instagramProfileName);
     const [doDelivery, setDoDelivery] = useState(restaurant?.doDelivery);
     const [deliveryFee, setDeliveryFee] = useState(restaurant?.deliveryFee);
+    const [deliveryTime, setDeliveryTime] = useState(restaurant?.deliveryTime);
     const [profileURL, setProfileURL] = useState(restaurant?.profileURL)
 
     // schedule data
@@ -116,6 +118,9 @@ export default function Details({restaurantDetails}: restaurantDetailsProps){
         } else if(deliveryFee.length > 10){
             toast.warning("O valor da taxa de entrega não pode ultrapassar 10 caracteres.")
             return
+        } else if(deliveryTime.length > 5){
+            toast.warning("O tempo da entrega em minutos não pode ser descrito por mais de 5 caracteres.")
+            return
         } 
 
         setLoading(true)
@@ -129,7 +134,8 @@ export default function Details({restaurantDetails}: restaurantDetailsProps){
                 contactNumber: contactNumber,
                 instagramProfileName: instagramProfileName,
                 doDelivery: doDelivery,
-                deliveryFee: deliveryFee
+                deliveryFee: deliveryFee,
+                deliveryTime: deliveryTime
             });
 
             setLoading(false)
@@ -296,16 +302,31 @@ export default function Details({restaurantDetails}: restaurantDetailsProps){
                             Perfil do Instagram
                         </FloatInput>
 
-                        <FloatInput
-                        type="number"
-                        step="0.01"
-                        min="0"
-                        id="deliveryFee"
-                        value={deliveryFee}
-                        onChange={(e)=>setDeliveryFee(e.target.value)}
-                        >
-                            Valor da taxa de entrega (delivery)
-                        </FloatInput>
+                        {doDelivery && (
+                            <FloatInput
+                            type="number"
+                            step="0.01"
+                            min="0"
+                            id="deliveryFee"
+                            value={deliveryFee}
+                            onChange={(e)=>setDeliveryFee(e.target.value)}
+                            >
+                                Valor da taxa de entrega (delivery)
+                            </FloatInput>
+                        )}
+
+                        {doDelivery && (
+                            <FloatInput
+                            type="number"
+                            step="1"
+                            min="0"
+                            id="deliveryTime"
+                            value={deliveryTime}
+                            onChange={(e)=>setDeliveryTime(e.target.value)}
+                            >
+                                Tempo médio do delivery (em minutos)
+                            </FloatInput>
+                        )}
 
                         <div className="mb-2">
                             <Checkbox

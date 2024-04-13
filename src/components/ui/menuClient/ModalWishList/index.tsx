@@ -19,6 +19,7 @@ interface WishListProps{
     totalPrice: string,
     doDelivery: number,
     deliveryFee: string,
+    deliveryTime: string,
     idRestaurant: string,
     clearWishItems: () => void,
     handleRemoveItem: (id: string) => void,
@@ -28,7 +29,7 @@ interface WishListProps{
     wishItems: ItemWishList[]
 }
 
-export default function ModalWishList({viewModalWishList, wishItems, totalPrice, handleViewModalWishList, handleRemoveItem, handleDecrementQuantity, handleIncrementQuantity, clearWishItems, doDelivery, deliveryFee, idRestaurant}: WishListProps){
+export default function ModalWishList({viewModalWishList, wishItems, totalPrice, handleViewModalWishList, handleRemoveItem, handleDecrementQuantity, handleIncrementQuantity, clearWishItems, doDelivery, deliveryFee, deliveryTime, idRestaurant}: WishListProps){
 
 
     // loadin button control
@@ -287,9 +288,11 @@ export default function ModalWishList({viewModalWishList, wishItems, totalPrice,
                                             </FloatInput>
                                         </div>
 
-                                        <div className='w-full text-center text-gray-600 -mt-2 mb-3 text-sm'>
-                                            *Tempo médio de entrega: 45 minutos
-                                        </div>
+                                        {orderType === "delivery" && (
+                                            <div className='w-full text-center text-gray-600 -mt-2 mb-3 text-sm'>
+                                                *Tempo médio de entrega: {deliveryTime} minutos
+                                            </div>
+                                        )}
                                         
                                     </div>
 

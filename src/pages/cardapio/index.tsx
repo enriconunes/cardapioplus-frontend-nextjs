@@ -79,6 +79,7 @@ type Restaurant = {
     instagramProfileName: string;
     doDelivery: number;
     deliveryFee: string;
+    deliveryTime: string;
     profileURL: string;
     createdAt: string;
     updatedAt: string;
@@ -274,12 +275,13 @@ export default function cardapio(){
                 <main className="rounded-t-lg bg-gray-50 md:bg-transparent -mt-2 flex flex-col items-center max-w-3xl md:mx-auto">
 
                     {/* avatar image */}
-                    <div className="w-40 -mt-20 h-40 md:w-48 md:h-48 rounded-3xl overflow-hidden border-4 border-gray-100">
+                    <div className="w-40 -mt-20 h-40 md:w-48 md:h-48 rounded-3xl overflow-hidden border-4 border-gray-100 bg-gray-100">
                         <img
                         src={restaurant?.profileURL}
                         alt="Imagem de perfil do restaurante"
                         className="w-full h-full object-cover"
                         />
+                        
                     </div>
 
                     {/* description */}
@@ -425,6 +427,7 @@ export default function cardapio(){
                 totalPrice={totalPrice}
                 doDelivery={restaurant?.doDelivery}
                 deliveryFee={restaurant?.deliveryFee}
+                deliveryTime={restaurant?.deliveryTime}
                 idRestaurant={restaurant?.idRestaurant}
                 viewModalWishList={viewModalWishList}
                 handleRemoveItem={handleRemoveItem}

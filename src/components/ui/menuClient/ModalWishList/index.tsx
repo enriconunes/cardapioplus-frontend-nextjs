@@ -12,6 +12,7 @@ import { FaRegTrashAlt } from "react-icons/fa";
 
 // components
 import { FloatInput } from '../../FloatInput'
+import { FloatInputContact } from '../../FloatInputContact'
 
 
 interface WishListProps{
@@ -68,7 +69,14 @@ export default function ModalWishList({viewModalWishList, wishItems, totalPrice,
             if (clientContact.length > 45) {
                 toast.warning(`O número para contato não pode ter mais do que 45 caracteres.`)
                 return
-            } 
+            }
+
+            const regex = /^[1-9]{2}9[0-9]{8}$/;
+
+            if (!regex.test(clientContact)) {
+                toast.warning(`O número para contato não tem o formato correto.`)
+                return
+            }
         }
 
         if(note.length > 255){
@@ -121,6 +129,11 @@ export default function ModalWishList({viewModalWishList, wishItems, totalPrice,
         }
         
     }
+
+    // used to formating the input to client contact
+    const handleChangeContactNumber = (value) => {
+        setClientContact(value);
+    };
 
     const cancelButtonRef = useRef(null)
 
@@ -267,14 +280,15 @@ export default function ModalWishList({viewModalWishList, wishItems, totalPrice,
                                                     </FloatInput>
                                                 </div>
 
-                                                <FloatInput
-                                                type="text"
-                                                id="contact"
-                                                value={clientContact}
-                                                onChange={(e) => setClientContact(e.target.value)}
-                                                >
-                                                    Digite um número para contato
-                                                </FloatInput>
+                                                <div>
+                                                    <FloatInputContact
+                                                        id="contact"
+                                                        value={clientContact}
+                                                        onChange={handleChangeContactNumber}
+                                                    >
+                                                        Digite um número para contato
+                                                    </FloatInputContact>
+                                                </div>
                                             </div>
                                         )}
                                         <div className='-mt-2'>

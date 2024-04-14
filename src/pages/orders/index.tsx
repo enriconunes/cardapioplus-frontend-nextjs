@@ -2,6 +2,7 @@ import Head from "next/head"
 import { useState, useEffect } from "react"
 import { toast } from "react-toastify"
 import { setupAPIClient } from "@/src/services/api"
+import Link from "next/link"
 
 // components
 import Header from "@/src/components/ui/Header"
@@ -11,7 +12,13 @@ import { Checkbox } from "@/src/components/ui/Checkbox"
 // icons
 import { TbArrowsSort } from "react-icons/tb";
 import { IoFilterSharp } from "react-icons/io5";
+import { CiFilter } from "react-icons/ci";
 import { space } from "postcss/lib/list"
+import { MdDeliveryDining } from "react-icons/md";
+import { MdOutlineOpenInNew } from "react-icons/md";
+import { FaWhatsapp } from "react-icons/fa";
+import { GrInProgress } from "react-icons/gr";
+
 
 interface OrderItem {
     id: number;
@@ -87,20 +94,65 @@ export default function Orders(){
         setSeeFilters(!seeFilters)
     }
 
+    // receive orders from database
     async function getOrders(){
         const apiClient = setupAPIClient()
-        const response = await apiClient.get(`/order?typeOrder=${typeOrderParam}&createdAt=${createdAtSort}`)
+        const response = await apiClient.get(`/order?typeOrder=${typeOrderParam}&createdAt=${createdAtSort}&status=1`)
         const data = response.data as Order[]
         setOrders(data)
+    }
+
+    // open google maps using the client address
+    function handleOpenMaps(address) {
+        const encodedAddress = encodeURIComponent(address);
+        const url = `https://www.google.com/maps/search/?api=1&query=${encodedAddress}`;
+        window.open(url, '_blank');
+    };
+    
+    // format the contact exibition
+    function formatContact(contact) {
+        if (!contact) return ''; // Retorna uma string vazia se o contato não estiver definido
+
+        const rawValue = contact.replace(/\D/g, ''); // Remove tudo que não for número
+        let formattedNumber = '';
+
+        if (rawValue.length <= 2) {
+            formattedNumber = rawValue;
+        } else if (rawValue.length <= 6) {
+            formattedNumber = `(${rawValue.slice(0, 2)}) ${rawValue.slice(2)}`;
+        } else if (rawValue.length <= 11) {
+            formattedNumber = `(${rawValue.slice(0, 2)}) ${rawValue.slice(2, 7)}-${rawValue.slice(7)}`;
+        } else {
+            formattedNumber = `(${rawValue.slice(0, 2)}) ${rawValue.slice(2, 7)}-${rawValue.slice(7, 11)}`;
+        }
+
+        return formattedNumber;
+    }
+
+    // close an order
+    async function handleCloseOrder(idOrder: string){
+
+        try{
+            const apiClient = setupAPIClient()
+            await apiClient.put("/order", {
+                idOrder: idOrder
+            })
+
+            await getOrders()
+            toast.success("Pedido finalizado.")
+        } catch(err){
+            toast.error("Erro ao finalizar pedido: " + err)
+            return
+        }
     }
 
     useEffect(() => {
         const intervalId = setInterval(() => {
 
+            // receive orders from database and update useState
             getOrders()
-            console.log(`/order?typeOrder=${typeOrderParam}&createdAt=${createdAtSort}`)
 
-        }, 1500);
+        }, 2000);
 
         return () => clearInterval(intervalId); // limpar o intervalo quando o componente é desmontado
 
@@ -115,24 +167,24 @@ export default function Orders(){
 
         <Header />
 
-        <main className="max-w-3xl mx-auto text-gray-800">
+        <main className="max-w-3xl mx-auto text-gray-800 min-h-screen">
 
             {/* title and filters */}
-            <div className="p-4 md:pt-6">
-                <h1 className="text-center font-medium text-xl md:text-2xl pb-4 drop-shadow-md border-b">Novos pedidos</h1>
+            <div className="p-4 md:pt-6 relative flex justify-center border-b">
+                <h1 className="text-center font-medium text-xl md:text-2xl drop-shadow-md">Novos pedidos</h1>
 
 
-                <div className="w-full flex justify-end">
+                <div className="flex justify-end absolute right-4">
                     <button
                     className=""
                     onClick={ () => setSeeFilters(!seeFilters) }
                     >
-                        <IoFilterSharp size={27}/>
+                        <CiFilter  size={27}/>
                     </button>
                 </div>
 
                 {/* filters */}
-                <div className={`${seeFilters ? "flex" : "hidden"} justify-start flex-wrap bg-white shadow-md p-3 w-64 ml-auto`}>
+                <div className={`${seeFilters ? "flex" : "hidden"} z-40 absolute justify-start flex-wrap bg-white shadow-md p-3 w-64 right-0`}>
                     <div className="flex flex-col -space-y-1">
                         <Checkbox
                         checked={seeStoreOrders}
@@ -172,19 +224,134 @@ export default function Orders(){
             </div>
 
             {/* orders listing */}
-            <div>
+            <div className="px-2">
+
+                {orders?.length === 0 && (
+                    <div className="flex flex-col w-fit mx-auto p-5 shadow-md rounded-md justify-center items-center mt-20 bg-white">
+                        <span className="text-lg font-medium text-gray-600">Não há nenhum pedido em aberto...</span>
+                        <span><GrInProgress size={40} className="animate-spin-slow text-gray-500 mt-4"/></span>
+                    </div>
+                )}
+
+                {/* order */}
                 {orders?.map((order) => (
-                    <div key={order.idOrder} className="flex flex-col bg-red-100 mb-4">
-                        <span>Numero {order.number}</span>
-                        <span>Tipo {order.typeOrder}</span>
-                        <span>Obs.: {order.note}</span>
-                        <span>Hora {order.createdAt}</span>
+                    <div key={order.idOrder} className="flex flex-col bg-white rounded-md shadow-md pb-4 mb-4 text-gray-700">
+
+                        {/* first row - number and time */}
+                        <div className="flex justify-between items-center bg-gray-900 px-2 py-1 rounded-t-md text-gray-50">
+                            <div>
+                                <span className="text-2xl font-bold">#{order.number}</span>
+                            </div>
+                            <div className="flex flex-col items-end font-medium -space-y-1 font-mono">
+                                <span>{new Date(order.createdAt).toLocaleDateString('pt-BR')}</span>
+                                <span>{new Date(order.createdAt).toLocaleTimeString()}</span>
+                            </div>
+                        </div>
+
+                        {/* div just to padding x all divs*/}
+                        <div className="px-3">
+                            {/* second row- items listing */}
+                            <div className="">
+                                {order.OrderItems.map((item) => (
+
+                                    // item
+                                    <div key={item.idItem} className="flex gap-x-1 my-3 shadow-md border-sm p-2">
+
+                                        {/* first column - amount */}
+                                        <div className="text-lg font-medium leading-6">
+                                            {item.quantity}x
+                                        </div>
+
+                                        {/* second column - name, description and price*/}
+                                        <div className="flex flex-col">
+                                            <span className="text-lg font-medium leading-6 mb-1">{item.Item.name}</span>
+                                            <span className="text-gray-600">{item.Item.description}</span>
+                                            <span className="font-medium text-gray-600">{item.Item.price} (unidade)</span>
+                                        </div>
+
+                                    </div>
+
+                                ))}
+                            </div>
+
+                            {/* third row - client details*/}
+                            {order.typeOrder === 'delivery' ? (
+                                <div className="flex flex-col">
+                                    <div
+                                    className="text-lg font-medium w-full border border-gray-700 bg-gray-50 flex justify-center items-center gap-x-1 my-2 rounded-sm"
+                                    >
+                                        Pedido para delivery <MdDeliveryDining size={23}/>
+                                    </div>
+
+                                    {/* address */}
+                                    <div className="flex flex-col -space-y-1">
+                                        <span className="font-medium text-lg">Endereço:</span>
+                                        <span
+                                        className="text-blue-900 w-fit hover:cursor-pointer flex items-center gap-x-1"
+                                        onClick={() => handleOpenMaps(order.clientAddress) }
+                                        >{order.clientAddress} <MdOutlineOpenInNew/></span>
+                                    </div>
+
+                                    {/* contact */}
+                                    <div className="flex flex-col -space-y-1">
+                                        <span className="font-medium text-lg">Contato:</span>
+
+                                        <div className="flex items-center gap-x-1">
+                                            <Link
+                                            href={`https://wa.me/+55${order.clientContact}`}
+                                            target="_blank"
+                                            rel="noopener noreferrer"
+                                            className="text-blue-900"
+                                            >
+                                                {formatContact(order.clientContact)}
+                                            </Link>
+                                            <FaWhatsapp />
+                                        </div>
+
+                                    </div>
+                                </div>
+                            ):(
+                                <div className="flex flex-col">
+                                    <div
+                                    className="text-lg text-center font-medium w-full border border-gray-700 bg-gray-50 px-1 gap-x-1 my-2 rounded-sm"
+                                    >
+                                        Mesa {order.table}
+                                    </div>
+                                </div>
+                            )}
+
+                            {/* 4th row - description */}
+                            {order.note !== '' && (
+                                <div className="flex flex-col -space-y-1">
+                                        <span className="font-medium text-lg">Observação do cliente:</span>
+                                        <span>{order.note}</span>
+                                </div>
+                            )}
+
+                            {/* total */}
+                            <div className="flex flex-col -space-y-2 mt-1">
+                                <span className="font-medium text-lg">Total: R${order.totalPrice}</span>
+                                {order.typeOrder === 'delivery' && (
+                                    <span className="text-gray-400">(Taxa de entrega inclusa)</span>
+                                )}
+                            </div>
+
+                            {/* close order button */}
+                            <button
+                            onClick={ () => handleCloseOrder(order.idOrder)}
+                            className="bg-red-700 w-full text-gray-50 font-medium text-lg py-1 rounded-md mt-3 hover:cursor-pointer"
+                            >
+                                Finalizar pedido
+                            </button>
+                        </div>
                     </div>
                 ))}
                 
             </div>
 
         </main>
+
+        <Footer />
 
         </>
     )

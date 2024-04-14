@@ -17,6 +17,7 @@ import { FaInstagram } from "react-icons/fa6";
 import { FaPlus } from "react-icons/fa";
 import { LuVegan } from "react-icons/lu";
 import { FaShoppingCart } from "react-icons/fa";
+import { GrInProgress } from "react-icons/gr";
 
 
 type MenuItem = {
@@ -260,7 +261,7 @@ export default function cardapio(){
         <>
             
             <Head>
-                <title>{"Cardápio Digita - " + restaurant?.name}</title>
+                <title>Restaurox - Cardápio Digital</title>
             </Head>
 
             
@@ -271,138 +272,149 @@ export default function cardapio(){
                     
                 </div>
  
-                {/* main content */}
-                <main className="rounded-t-lg bg-gray-50 md:bg-transparent -mt-2 flex flex-col items-center max-w-3xl md:mx-auto">
+                {restaurant?.Menu ? (
+                    <main className="rounded-t-lg bg-gray-50 md:bg-transparent -mt-2 flex flex-col items-center max-w-3xl md:mx-auto">
 
-                    {/* avatar image */}
-                    <div className="w-40 -mt-20 h-40 md:w-48 md:h-48 rounded-3xl overflow-hidden border-4 border-gray-100 bg-gray-100">
-                        <img
-                        src={restaurant?.profileURL}
-                        alt="Imagem de perfil do restaurante"
-                        className="w-full h-full object-cover"
-                        />
-                        
-                    </div>
+                        {/* avatar image */}
+                        <div className="w-40 -mt-20 h-40 md:w-48 md:h-48 rounded-3xl overflow-hidden border-4 border-gray-100 bg-gray-100">
+                            <img
+                            src={restaurant?.profileURL}
+                            alt="Imagem de perfil do restaurante"
+                            className="w-full h-full object-cover"
+                            />
+                            
+                        </div>
 
-                    {/* description */}
-                    <div className="w-full px-4 pt-2 font-medium">
+                        {/* description */}
+                        <div className="w-full px-4 pt-2 font-medium">
 
-                        {/* first row*/}
-                        <div className="flex flex-col items-center">
-                            {/* name */}
-                            <h1 className="text-2xl font-medium">{restaurant?.name}</h1>
-        
-                            {/* address */}
-                            <div>
-                                <p className="text-center">{restaurant?.address}</p>
+                            {/* first row*/}
+                            <div className="flex flex-col items-center">
+                                {/* name */}
+                                <h1 className="text-2xl font-medium">{restaurant?.name}</h1>
+            
+                                {/* address */}
+                                <div>
+                                    <p className="text-center">{restaurant?.address}</p>
+                                </div>
+
+                                {/* schedule */}
+                                <button
+                                onClick={ handleViewModalSchedule }
+                                className="px-8 py-[3px] bg-green-700 text-white rounded-md mt-3 font-medium"
+                                >
+                                    Ver horários
+                                </button>
                             </div>
 
-                            {/* schedule */}
-                            <button
-                            onClick={ handleViewModalSchedule }
-                            className="px-8 py-[3px] bg-green-700 text-white rounded-md mt-3 font-medium"
-                            >
-                                Ver horários
-                            </button>
+                            {/* second row */}
+                            <div className="space-y-1 py-4">
+                                <div className="flex items-center"><IoIosCall className="mr-1" size={21}/> {restaurant?.contactNumber}</div>
+                                <div className="flex items-center"><FaInstagram className="mr-2" size={19}/> {restaurant?.instagramProfileName}</div>
+
+                                <div
+                                className={`flex items-center gap-x-1 text ${restaurant?.doDelivery ? "text-green-700" : "text-red-700"}`}
+                                >
+                                    <MdDeliveryDining size={21}/> {restaurant?.doDelivery ? "Delivery disponível" : "Delivery Indisponível"}`
+                                </div> 
+                            </div>
+
                         </div>
 
-                        {/* second row */}
-                        <div className="space-y-1 py-4">
-                            <div className="flex items-center"><IoIosCall className="mr-1" size={21}/> {restaurant?.contactNumber}</div>
-                            <div className="flex items-center"><FaInstagram className="mr-2" size={19}/> {restaurant?.instagramProfileName}</div>
-
-                            <div
-                            className={`flex items-center gap-x-1 text ${restaurant?.doDelivery ? "text-green-700" : "text-red-700"}`}
-                            >
-                                <MdDeliveryDining size={21}/> {restaurant?.doDelivery ? "Delivery disponível" : "Delivery Indisponível"}`
-                            </div> 
+                        {/* categories listing - scroll*/}
+                        <div className="py-3 flex w-full font-medium overflow-x-scroll gap-x-2 text-red-700 px-2 md:no-scrollbar">
+                            {restaurant?.Menu.Categories.map(category => (
+                                <Link
+                                href={`#${category.name}`}
+                                key={category.idCategory}
+                                className="border-2 border-red-700 px-3 rounded-md">{category.name}
+                                </Link>
+                            ))}
                         </div>
 
-                    </div>
+                        {/* category name and item listing */}
+                        {restaurant?.Menu.Categories.map((category) => (
+                            <div key={category.idCategory + "2"} className="w-full px-4 flex flex-col">
+                            
+                                {/* cateogory name */}
+                                <h3 id={category.name} className="font-medium text-2xl mt-3 mb-2">{category.name}</h3>
 
-                    {/* categories listing - scroll*/}
-                    <div className="py-3 flex w-full font-medium overflow-x-scroll gap-x-2 text-red-700 px-2 md:no-scrollbar">
-                        {restaurant?.Menu.Categories.map(category => (
-                            <Link
-                            href={`#${category.name}`}
-                            key={category.idCategory}
-                            className="border-2 border-red-700 px-3 rounded-md">{category.name}
-                            </Link>
-                        ))}
-                    </div>
+                                {/* items */}
+                                <div className="grid grid-cols-1 md:grid-cols-2 md:gap-x-6 gap-y-3">
 
-                    {/* category name and item listing */}
-                    {restaurant?.Menu.Categories.map((category) => (
-                        <div key={category.idCategory + "2"} className="w-full px-4 flex flex-col">
-                        
-                            {/* cateogory name */}
-                            <h3 id={category.name} className="font-medium text-2xl mt-3 mb-2">{category.name}</h3>
+                                    {/* item listing */}
+                                    {category.Items.map((item) => (
 
-                            {/* items */}
-                            <div className="grid grid-cols-1 md:grid-cols-2 md:gap-x-6 gap-y-3">
+                                        <div key={item.idItem} className="flex gap-x-2 bg-white md:p-3 p-2 rounded-md shadow-md">
 
-                                {/* item listing */}
-                                {category.Items.map((item) => (
-
-                                    <div key={item.idItem} className="flex gap-x-2 bg-white md:p-3 p-2 rounded-md shadow-md">
-
-                                        {/* first col - image */}
-                                        <div className="w-1/4">
-                                            <div className="w-20 h-20">
-                                                <img src={`${item.imageURL}`}
-                                                alt={`Imagem ${item.name}`}
-                                                className="w-full h-full object-cover rounded-md hover:scale-110 duration-200 hover:rotate-2"
-                                                />
-                                            </div>
-                                        </div>
-
-                                        {/* second col - texts */}
-                                        <div className="w-3/4">
-                                            {/* name */}
-                                            <span className="text-lg font-medium leading-5 mb-[2px] flex items-center gap-x-2">{item.name}</span>
-                                                
-                                            {/* description */}
-                                            <div className="min-h-8 pb-1">
-                                                <p className="leading-tight text-sm">{item.description}</p>
-                                            </div>
-
-                                            {/* price and add button */}
-                                            <div className="flex justify-between items-center pt-1">
-                                                
-                                                {item.avaliable === 0 ? (
-                                                    <span className="font-medium text-red-700">Indisponível</span>
-                                                ):(
-                                                    <span className="font-medium text-gray-600 text-base">R$ {item.price}</span>
-                                                )}
-
-                                                <div className="flex gap-x-2">
-                                                    {item.vegan === 1 && (
-                                                        <span
-                                                        className="border border-green-700 px-3 text-green-700 rounded-md flex items-center justify-center gap-x-1 font-medium text-sm">
-                                                            Vegano <LuVegan  />
-                                                        </span>
-                                                    )}
-                                                    
-                                                    {item.avaliable === 1 && (
-                                                        <button
-                                                        onClick={() => handleAddItem(item)}
-                                                        className="bg-red-700 px-3 py-1 text-gray-100 rounded-md hover:cursor-pointer hover:scale-110 flex items-center justify-center transition-colors duration-200 focus:outline-none active:bg-green-700">
-                                                            <FaPlus  />
-                                                        </button>
-                                                    )}
+                                            {/* first col - image */}
+                                            <div className="w-1/4">
+                                                <div className="w-20 h-20">
+                                                    <img src={`${item.imageURL}`}
+                                                    alt={`Imagem ${item.name}`}
+                                                    className="w-full h-full object-cover rounded-md hover:scale-110 duration-200 hover:rotate-2"
+                                                    />
                                                 </div>
-                                            </div>                                            
-                                        </div>
+                                            </div>
 
-                                    </div>
-                                ))}
+                                            {/* second col - texts */}
+                                            <div className="w-3/4">
+                                                {/* name */}
+                                                <span className="text-lg font-medium leading-5 mb-[2px] flex items-center gap-x-2">{item.name}</span>
+                                                    
+                                                {/* description */}
+                                                <div className="min-h-8 pb-1">
+                                                    <p className="leading-tight text-sm">{item.description}</p>
+                                                </div>
+
+                                                {/* price and add button */}
+                                                <div className="flex justify-between items-center pt-1">
+                                                    
+                                                    {item.avaliable === 0 ? (
+                                                        <span className="font-medium text-red-700">Indisponível</span>
+                                                    ):(
+                                                        <span className="font-medium text-gray-600 text-base">R$ {item.price}</span>
+                                                    )}
+
+                                                    <div className="flex gap-x-2">
+                                                        {item.vegan === 1 && (
+                                                            <span
+                                                            className="border border-green-700 px-3 text-green-700 rounded-md flex items-center justify-center gap-x-1 font-medium text-sm">
+                                                                Vegano <LuVegan  />
+                                                            </span>
+                                                        )}
+                                                        
+                                                        {item.avaliable === 1 && (
+                                                            <button
+                                                            onClick={() => handleAddItem(item)}
+                                                            className="bg-red-700 px-3 py-1 text-gray-100 rounded-md hover:cursor-pointer hover:scale-110 flex items-center justify-center transition-colors duration-200 focus:outline-none active:bg-green-700">
+                                                                <FaPlus  />
+                                                            </button>
+                                                        )}
+                                                    </div>
+                                                </div>                                            
+                                            </div>
+
+                                        </div>
+                                    ))}
+
+                                </div>
 
                             </div>
+                        ))}
 
-                        </div>
-                    ))}
-
-                </main>
+                    </main>
+                ):(
+                    <div className="min-h-screen mx-3">
+                        <div className="flex flex-col w-fit mx-auto p-5 shadow-md rounded-md justify-center items-center mt-20 bg-white">
+                            <span className="text-2xl font-medium text-gray-600">Oops!</span>
+                            <span className="text-lg font-medium text-gray-600 text-center">Nenhum restaurante foi encontrado com este endereço...</span>
+                            <span><GrInProgress size={40} className="animate-spin-slow text-gray-500 mt-4"/></span>
+                        </div> 
+                    </div>
+                )}
+                {/* main content */}
+                
 
                 <footer className="w-full bg-gray-950 h-32 mt-12 flex flex-col items-center">
                     <div className="mt-5">

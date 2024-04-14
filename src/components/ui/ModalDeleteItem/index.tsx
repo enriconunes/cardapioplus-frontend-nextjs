@@ -90,14 +90,14 @@ export function ModalDeleteItem({item, viewModalDeleteItem, handleViewModalDelet
                 <div className="bg-gray-50 px-4 py-3 sm:flex sm:flex-row-reverse sm:px-6">
                   <button
                     type="button"
-                    className="inline-flex w-full justify-center py-2 border border-red-600 text-red-600 shadow-sm font-medium bg-red-50 hover:bg-red-100 px-3 sm:ml-3 sm:w-auto"
+                    className="inline-flex w-full justify-center py-2 border border-red-700 text-gray-100 shadow-sm font-medium bg-red-700 hover:bg-red-800 px-3 sm:ml-3 sm:w-auto"
                     onClick={handleDelete}
                   >
                     Deletar
                   </button>
                   <button
                     type="button"
-                    className="inline-flex w-full justify-center py-2 border border-gray-600 text-gray-600 shadow-sm font-medium bg-gray-50 hover:bg-gray-100 px-3 sm:ml-3 sm:w-auto mt-2 md:mt-0"
+                    className="inline-flex w-full justify-center py-2 border border-red-700 text-red-700 shadow-sm font-medium bg-white hover:bg-gray-100 px-3 sm:ml-3 sm:w-auto mt-2 md:mt-0"
                     ref={cancelButtonRef}
                     onClick={handleViewModalDeleteItem}
                   >

@@ -8,7 +8,7 @@ export function Input({...rest}: InputProps){
     return(
         <input 
         {...rest}
-        className="bg-slate-50 bg-opacity-90 p-2 mb-3 rounded-md text-gray-500 font-medium placeholder:text-gray-500 placeholder:font-medium border-none"
+        className="bg-opacity-90 p-2 mb-3 rounded-sm text-gray-500 font-medium ring-1 ring-gray-600 focus:ring-red-700 placeholder:text-gray-500 placeholder:font-medium border-none"
         />
     )
 }

@@ -16,6 +16,9 @@ import { setupAPIClient } from '@/src/services/api'
 
 import { toast } from 'react-toastify'
 
+// icons
+import { PiKeyReturnLight } from "react-icons/pi";
+
 interface modalProps{
     item: Item
     viewModalItem: boolean
@@ -264,14 +267,14 @@ export default function ModalItem({item, viewModalItem, updateMenu, handleViewMo
               <div className={`py-3 sm:flex md:justify-end sm:flex-row md:px-0 sm:px-6 w-full`}>
               <button
                 type="submit"
-                className="w-full py-2 border border-green-600 text-green-600 shadow-sm font-medium bg-green-50 hover:bg-green-100 flex justify-center sm:ml-3 md:mx-0 sm:w-auto md:px-3"
+                className="w-full py-2 border border-red-700 text-red-700 shadow-sm font-medium bg-white hover:bg-gray-100 flex justify-center sm:ml-3 md:mx-0 sm:w-auto md:px-3"
               >
                 Atualizar informações
               </button>
 
               <button
                 type="button"
-                className="w-full py-2 border border-red-600 text-red-600 shadow-sm font-medium bg-red-50 hover:bg-red-100 flex justify-center sm:ml-3 sm:w-auto md:px-3 mt-2 md:mt-0 md:mx-2"
+                className="w-full py-2 border border-red-700 text-gray-100 shadow-sm font-medium bg-red-700 hover:bg-red-800 flex justify-center sm:ml-3 sm:w-auto md:px-3 mt-2 md:mt-0 md:mx-2"
                 onClick={handleViewModalDeleteItem}
               >
                 Deletar item
@@ -279,11 +282,12 @@ export default function ModalItem({item, viewModalItem, updateMenu, handleViewMo
 
               <button
                 type="button"
-                className="w-full py-2 border border-gray-600 text-gray-600 shadow-sm font-medium bg-gray-50 hover:bg-gray-100 flex justify-center mt-2 sm:mt-0 sm:w-auto md:px-3"
+                className="w-full py-2 border border-gray-700 text-gray-700 shadow-sm font-medium bg-white hover:bg-gray-100 flex justify-center mt-2 sm:mt-0 sm:w-auto md:px-3 items-center gap-x-1"
                 ref={cancelButtonRef}
                 onClick={handleViewModalItem}
               >
                 Cancelar
+                <PiKeyReturnLight size={20}/>
               </button>
             </div>
 

@@ -1,4 +1,4 @@
-import logo from '../../../../public/logo.png'
+import logo from '../../../../public/logoWhite.png'
 import Image from 'next/image'
 import Link from 'next/link'
 import { useState, useContext } from 'react';
@@ -9,6 +9,7 @@ import { IoMdMenu } from "react-icons/io";
 import { IoMdClose } from "react-icons/io";
 import { MdLogout } from "react-icons/md";
 import { GrNotes } from "react-icons/gr";
+import { GrRestaurant } from "react-icons/gr";
 
 export default function Header(){
 
@@ -51,26 +52,36 @@ export default function Header(){
             </div>
 
             {/* hidden list */}
-            <div className={`bg-white h-14 md:h-20 shadow-md flex items-center justify-between px-4 ${menuView ? "" : "hidden"}`}>
+            <div className={`bg-white h-fit shadow-md flex items-center justify-between py-1 px-4 ${menuView ? "" : "hidden"} absolute w-full z-50 text-gray-600`}>
                     
-                <ul>
+                <ul className='w-full'>
+                    <li>
+                        <Link
+                        href={"/dashboard"}
+                        className='flex items-center justify-end gap-x-1 w-full py-2 border-b hover:text-red-700'
+                        >
+                            <span className='font-medium'>Seu restaurante</span>
+                            <GrRestaurant 
+                            className='' size={21}/>
+                        </Link>
+                    </li>
                     <li>
                         <Link
                         href={"/orders"}
-                        className='flex items-center gap-x-1'
+                        className='flex items-center justify-end gap-x-1 w-full py-2 border-b hover:text-red-700'
                         >
-                            Novos pedidos
+                            <span className='font-medium'>Painel de pedidos</span>
                             <GrNotes
-                            className='mt-1'/>
+                            className='mt-1' size={19}/>
                         </Link>
                     </li>
                     <li>
                         <button
-                        className='flex items-center gap-x-1'
+                        className='flex items-center justify-end gap-x-1 w-full py-2 hover:text-red-700'
                         onClick={signOut}>
-                            Sair da sua conta
+                            <span className='font-medium'>Sair da sua conta</span>
                             <MdLogout
-                            className='mt-1'/>
+                            className='mt-1' size={20}/>
                         </button>
                     </li>
                 </ul>

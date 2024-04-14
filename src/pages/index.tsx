@@ -3,7 +3,7 @@ import Image from "next/image";
 import Link from "next/link";
 
 // image
-import logo from "../../public/logo.png"
+import logo from "../../public/logoRed-700.png"
 
 // components
 import { Input } from "../components/ui/Input";
@@ -51,21 +51,21 @@ export default function Home() {
       </Head>
     
       {/* container */}
-      <main className="h-screen w-screen flex justify-center items-center bg-gradient-to-br from-blue-400  to-blue-900">
+      <main className="h-screen w-screen flex justify-center items-center">
 
         {/* form content */}
-        <div className="mx-3 max-w-2xl text-center bg-white bg-opacity-65 shadow-lg p-4 rounded-md">
+        <div className="mx-3 max-w-xl text-center bg-white shadow-md p-4 rounded-sm">
 
           <div>
             <Image
             src={logo}
             alt="Logo Next Pizza"
-            className="w-10/12 mx-auto -mb-2 md:-mb-4"
+            className="w-8/12 mx-auto -mb-2 md:-mb-4"
             />
           </div>
 
           <form
-          className="flex flex-col"
+          className="flex flex-col mt-5 md:mt-7"
           onSubmit={handleLogin}
           >
 
@@ -90,7 +90,7 @@ export default function Home() {
           </form>
 
           <Link href={"/signup"}
-          className="font-medium text-blue-900 hover:brightness-125">Não tem uma conta? Cadastre-se</Link>
+          className="font-medium text-red-900 hover:brightness-125">Não tem uma conta? Cadastre-se</Link>
 
         </div>
 

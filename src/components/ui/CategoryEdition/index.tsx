@@ -69,7 +69,7 @@ export function CategoryEdition({nameCategory, idCategory, updateMenu}: Category
         <div className="md:mt-6 md:mb-2">
             <div className={`mt-3 flex items-center gap-x-2`}>
                 <h4 className="text-lg font-medium">{nameCategory}</h4>
-                <button onClick={handleView}><label htmlFor="name"><FaEdit className="text-blue-900 hover:text-blue-700 hover:cursor-pointer"/></label></button>
+                <button onClick={handleView}><label htmlFor="name"><FaEdit className="text-red-900 hover:text-red-700 hover:cursor-pointer"/></label></button>
             </div>
 
             <form
@@ -86,13 +86,13 @@ export function CategoryEdition({nameCategory, idCategory, updateMenu}: Category
 
                 <button
                 type="submit"
-                className="border h-11 px-3 border-green-600 text-green-600 shadow-sm font-medium bg-green-50 hover:bg-green-100"
+                className="border h-11 px-3 border-red-700 text-red-700 shadow-sm font-medium bg-white hover:bg-gray-100"
                 >
                     <FaCheck />
                 </button>
 
                 <span
-                className="border h-11 px-3 border-red-600 text-red-600 shadow-sm font-medium bg-red-50 hover:bg-red-100 flex justify-center items-center"
+                className="border h-11 px-3 border-red-700 text-gray-100 shadow-sm font-medium bg-red-700 hover:bg-red-800 flex justify-center items-center hover:cursor-pointer"
                 onClick={handleDelete}>
                     <FaRegTrashCan />
                 </span>

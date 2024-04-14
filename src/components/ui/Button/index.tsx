@@ -14,7 +14,7 @@ export function Button({ loading, children, ...rest}: ButtonProps){
 
     return(
         <button
-        className="p-2 mb-2 rounded-md bg-blue-900 text-gray-100 flex justify-center items-center hover:brightness-150 transition duration-700"
+        className="p-2 mb-2 rounded-md bg-red-700 text-gray-100 flex justify-center items-center hover:brightness-110 transition duration-700"
         disabled={loading}
         {...rest}
         >

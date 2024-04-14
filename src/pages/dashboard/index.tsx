@@ -113,7 +113,7 @@ export default function dashboard({restaurantDetails, menuDetails}: restaurantDe
 
             <Head>
                 <title>
-                    Área pessoal - Cardápio Plus
+                    Restaurox - Seu Restaurante
                 </title>
             </Head>
 
@@ -122,19 +122,18 @@ export default function dashboard({restaurantDetails, menuDetails}: restaurantDe
             <main className="px-3 max-w-xl mx-auto">
 
                 {/* restaurant details */}
-                <div className="px-4 flex flex-col items-center justify-center md:px-8 md:bg-white md:shadow-md mx-auto bg-white rounded-md shadow-md mt-4">
+                <div className="flex flex-col items-center justify-center md:bg-white md:shadow-md mx-auto rounded-md shadow-md mt-4">
 
-                    <div className="w-full flex flex-col -space-y-2 mt-4 text-xl text-gray-700 drop-shadow-md">
+                    <div className="w-full flex flex-col -space-y-2 p-4 rounded-t-md text-xl font-medium text-gray-100 drop-shadow-md bg-banner">
                         <span>Bem-vindo ao seu cardápio,</span>
                         <span className="mb-4">{user?.name}!</span>
-                        <div className="w-full mt-10 pt-4 pb-1 md:pb-4">
-                            <hr />
-                        </div>
+
                     </div>
 
+                    <div className="px-4 md:px-8 w-full flex flex-col items-center justify-center">
 
                     {/* avatar profile */}
-                    <div className="w-40 h-40 md:w-48 md:h-48 mt-5 rounded-3xl overflow-hidden border-4 border-gray-100">
+                    <div className="w-40 h-40 md:w-48 md:h-48 mt-5 rounded-3xl overflow-hidden border-4 bg-gray-100 border-gray-100">
                         <img
                         src={restaurant?.profileURL}
                         alt="Imagem de perfil do restaurante"
@@ -142,11 +141,18 @@ export default function dashboard({restaurantDetails, menuDetails}: restaurantDe
                         />
                     </div>
 
+                    <div className="flex flex-col items-center text-gray-700 mt-3">
+                        {/* name */}
+                        <h1 className="text-xl font-medium">{restaurant?.name}</h1>
+    
+                        {/* address */}
+                        <div>
+                            <p className="text-center">{restaurant?.address}</p>
+                        </div>
+                    </div>
+
                     {/* descriptions */}
                     <div className="bg-blue-00 w-full flex flex-col mt-2 text-gray-800">
-
-                        {/* restaurant name */}
-                        <h1 className="text-center font-medium text-xl mb-3">{restaurant?.name}</h1>
 
                         <div className="flex flex-col mt-1 ">
                             <span className="font-medium -mb-1">Contato</span>
@@ -158,22 +164,17 @@ export default function dashboard({restaurantDetails, menuDetails}: restaurantDe
                             <span className="overflow-hidden text-gray-600">@{restaurant?.instagramProfileName}</span>
                         </div>
 
-                        <div className="flex flex-col mt-1 mb-1">
-                            <span className="font-medium -mb-1">Endereço</span>
-                            <span className="overflow-hidden text-gray-600 leading-tight">{restaurant?.address}</span>
-                        </div>
-
-                        {restaurant?.doDelivery === 1 ? (
-                            <div className="items-center font-medium text-green-600 inline-flex w-full justify-center py-2 border border-green-600  shadow-sm bg-green-50 px-3 sm:w-auto md:mx-0 mt-2">*Delivery disponível <MdDeliveryDining size={20} className="text-green-600 ml-1"/></div>
-                        ):(
-                            <div className="items-center font-medium text-red-600 inline-flex w-full justify-center py-2 border border-red-600  shadow-sm bg-red-50 px-3 sm:w-auto md:mx-0 mt-2">*Delivery indisponível <MdDeliveryDining size={20} className="text-red-600 ml-1"/></div>
-                        )}
+                        <div
+                        className={`flex items-center font-medium gap-x-1 text ${restaurant?.doDelivery ? "text-green-700" : "text-red-700"}`}
+                        >
+                            <MdDeliveryDining size={21}/> {restaurant?.doDelivery ? "Delivery disponível" : "Delivery Indisponível"}`
+                        </div> 
 
                         {/* edit profile */}
                         <div className="w-full flex justify-end mt-2 mb-6">
                             <Link
                             href={"/details"}
-                            className="items-center font-medium text-gray-700 inline-flex w-full justify-center py-2 border border-gray-600  shadow-sm bg-gray-50 px-3 sm:ml-3 sm:w-auto hover:bg-gray-100"
+                            className="bg-red-700 px-3 py-1 text-gray-100 rounded-md hover:cursor-pointer flex items-center justify-center transition-colors duration-200 focus:outline-none active:bg-green-700"
                             >
                                 Editar descrição
                             </Link>
@@ -181,6 +182,7 @@ export default function dashboard({restaurantDetails, menuDetails}: restaurantDe
 
                         <hr />
                         
+                    </div>
                     </div>
                 </div>
 

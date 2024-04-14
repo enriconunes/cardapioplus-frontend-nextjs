@@ -62,6 +62,7 @@ export default function Orders(){
     const [seeDeliveryOrders, setSeeDeliveryOrders] = useState(true)
     const [typeOrderParam, setTypeOrderParam] = useState("all")
     const [createdAtSort, setCreatedAtSort] = useState("DESC")
+    const [statusOrderFilter, setStatusOrderFilter] = useState(1)
     const [seeFilters, setSeeFilters] = useState(false)
 
     const [orders, setOrders] = useState<Order[]>([])
@@ -72,6 +73,15 @@ export default function Orders(){
             setCreatedAtSort("ASC")
         } else{
             setCreatedAtSort("DESC")
+        }
+    }
+
+    // change createdArSort - "DESC" or "ASC"
+    function handleChangeStatusOrderFilter(){
+        if(statusOrderFilter === 1){
+            setStatusOrderFilter(0)
+        } else{
+            setStatusOrderFilter(1)
         }
     }
 
@@ -96,10 +106,15 @@ export default function Orders(){
 
     // receive orders from database
     async function getOrders(){
-        const apiClient = setupAPIClient()
-        const response = await apiClient.get(`/order?typeOrder=${typeOrderParam}&createdAt=${createdAtSort}&status=1`)
-        const data = response.data as Order[]
-        setOrders(data)
+        try{
+            const apiClient = setupAPIClient()
+            const response = await apiClient.get(`/order?typeOrder=${typeOrderParam}&createdAt=${createdAtSort}&status=${statusOrderFilter}`)
+            const data = response.data as Order[]
+            setOrders(data)
+        } catch(err){
+            toast.error("Erro ao atualizar lista de pedidos")
+            return
+        }
     }
 
     // open google maps using the client address
@@ -147,22 +162,27 @@ export default function Orders(){
     }
 
     useEffect(() => {
-        const intervalId = setInterval(() => {
 
-            // receive orders from database and update useState
-            getOrders()
+        const executeAndGetOrders = () => {
+            getOrders();
+        };
 
-        }, 2000);
+        // chamar a função pela primeira vez instantaneamente para so depois iniciar o ciclo
+        executeAndGetOrders();
 
-        return () => clearInterval(intervalId); // limpar o intervalo quando o componente é desmontado
+        // iniciar o temporizador para executar a função novamente após 3 segundos
+        const intervalId = setInterval(executeAndGetOrders, 3500);
 
-    }, [typeOrderParam, createdAtSort]);
+        // Limpar o intervalo quando o componente é desmontado
+        return () => clearInterval(intervalId);
+    }, [typeOrderParam, createdAtSort, statusOrderFilter]);
+
 
     return(
         <>
 
         <Head>
-            <title>Restaurox - Novos Pedidos</title>
+            <title>Restaurox - Painel de Pedidos</title>
         </Head>
 
         <Header />
@@ -171,7 +191,7 @@ export default function Orders(){
 
             {/* title and filters */}
             <div className="p-4 md:pt-6 relative flex justify-center border-b">
-                <h1 className="text-center font-medium text-xl md:text-2xl drop-shadow-md">Novos pedidos</h1>
+                <h1 className="text-center font-medium text-xl md:text-2xl drop-shadow-md">Painel de pedidos</h1>
 
 
                 <div className="flex justify-end absolute right-4">
@@ -184,7 +204,7 @@ export default function Orders(){
                 </div>
 
                 {/* filters */}
-                <div className={`${seeFilters ? "flex" : "hidden"} z-40 absolute justify-start flex-wrap bg-white shadow-md p-3 w-64 right-0`}>
+                <div className={`${seeFilters ? "flex" : "hidden"} z-40 absolute justify-start flex-wrap bg-white shadow-md p-3 w-64 right-0 top-12`}>
                     <div className="flex flex-col -space-y-1">
                         <Checkbox
                         checked={seeStoreOrders}
@@ -201,7 +221,21 @@ export default function Orders(){
 
                     <div className="w-full mt-2">
                         <div
-                        className="flex items-center justify-center gap-x-1 border border-green-700 text-green-700 rounded-md px-2 py-1 hover:cursor-pointer"
+                        className="flex items-center justify-center gap-x-1 border border-red-700 text-red-700 rounded-md px-2 py-1 hover:cursor-pointer"
+                        onClick={handleChangeStatusOrderFilter}
+                        >
+                            {statusOrderFilter === 1 ? (
+                                <span>Exibir pedidos em aberto</span>
+                            ):(
+                                <span>Exibir pedidos finalizados</span>
+                            )}
+
+                        </div>
+                    </div>
+
+                    <div className="w-full mt-2">
+                        <div
+                        className="flex items-center justify-center gap-x-1 border border-red-700 text-red-700 rounded-md px-2 py-1 hover:cursor-pointer"
                         onClick={handleChangeCreatedAtSort}
                         >
                             {createdAtSort === "DESC" ? (
@@ -214,7 +248,7 @@ export default function Orders(){
                     </div>
 
                     <button
-                    className="bg-green-700 ml-auto mt-2 px-3 text-white text-sm py-1 rounded-md hover:cursor-pointer"
+                    className="bg-red-700 ml-auto mt-2 px-3 text-white text-sm py-1 rounded-md hover:cursor-pointer"
                     onClick={ handleChangeFilter }
                     >
                         Aplicar
@@ -224,18 +258,18 @@ export default function Orders(){
             </div>
 
             {/* orders listing */}
-            <div className="px-2">
+            <div className="px-2 md:mt-5 md:flex md:flex-wrap md:justify-between">
 
                 {orders?.length === 0 && (
                     <div className="flex flex-col w-fit mx-auto p-5 shadow-md rounded-md justify-center items-center mt-20 bg-white">
-                        <span className="text-lg font-medium text-gray-600">Não há nenhum pedido em aberto...</span>
+                        <span className="text-lg font-medium text-gray-600">Nenhum pedido foi encontrado...</span>
                         <span><GrInProgress size={40} className="animate-spin-slow text-gray-500 mt-4"/></span>
-                    </div>
+                    </div> 
                 )}
 
                 {/* order */}
                 {orders?.map((order) => (
-                    <div key={order.idOrder} className="flex flex-col bg-white rounded-md shadow-md pb-4 mb-4 text-gray-700">
+                    <div key={order.idOrder} className="flex flex-col bg-white rounded-md shadow-md pb-4 mb-4 text-gray-700 md:w-[49%] h-fit">
 
                         {/* first row - number and time */}
                         <div className="flex justify-between items-center bg-gray-900 px-2 py-1 rounded-t-md text-gray-50">
@@ -337,12 +371,14 @@ export default function Orders(){
                             </div>
 
                             {/* close order button */}
-                            <button
-                            onClick={ () => handleCloseOrder(order.idOrder)}
-                            className="bg-red-700 w-full text-gray-50 font-medium text-lg py-1 rounded-md mt-3 hover:cursor-pointer"
-                            >
-                                Finalizar pedido
-                            </button>
+                            {order.statusOrder === true && (
+                                <button
+                                onClick={ () => handleCloseOrder(order.idOrder)}
+                                className="bg-red-700 w-full text-gray-50 font-medium text-lg py-1 rounded-md mt-3 hover:cursor-pointer"
+                                >
+                                    Finalizar pedido
+                                </button>
+                            )}
                         </div>
                     </div>
                 ))}

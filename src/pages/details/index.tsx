@@ -214,7 +214,7 @@ export default function Details({restaurantDetails}: restaurantDetailsProps){
 
             <Head>
                 <title>
-                    Detalhes do restaurante - Cardapio Plus
+                    Restaurox - Detalhes do Restaurante
                 </title>
             </Head>
 
@@ -222,7 +222,7 @@ export default function Details({restaurantDetails}: restaurantDetailsProps){
 
             <main className="px-3 max-w-xl mx-auto">
 
-                <div className="py-2 border border-gray-400 shadow-sm bg-gray-50 hover:bg-gray-100 h-8 flex items-center gap-x-1 w-fit px-3 mt-4 text-gray-600 text-sm"> 
+                <div className="bg-red-700 px-3 py-1 text-gray-100 rounded-md hover:cursor-pointer flex items-center justify-center transition-colors duration-200 focus:outline-none active:bg-green-700 w-fit mt-3 text-sm gap-x-2"> 
                     <IoArrowBackCircleOutline size={17}/>
                     <Link href={'/dashboard'}>Voltar para o cardápio</Link>
                 </div>

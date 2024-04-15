@@ -111,7 +111,7 @@ export function AuthProvider({children}: AuthProviderProps){
             })
 
             // exibir popup
-            toast.success("Logado com sucesso!")
+            // toast.success("Logado com sucesso!")
 
             // redirecionar user para a dashboard (pag de pedidos)
             Router.push('/dashboard')

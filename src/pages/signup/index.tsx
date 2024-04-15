@@ -81,7 +81,7 @@ export default function Home() {
       <main className="h-screen w-screen flex justify-center items-center">
 
         {/* form content */}
-        <div className="mx-3 max-w-2xl text-center bg-white bg-opacity-65 shadow-lg p-4 rounded-md">
+        <div className="mx-3 max-w-lg text-center bg-white bg-opacity-65 shadow-lg p-4 rounded-md">
 
           <div>
             <Image

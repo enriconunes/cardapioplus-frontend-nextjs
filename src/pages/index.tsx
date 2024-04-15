@@ -48,13 +48,14 @@ export default function Home() {
     
       <Head>
         <title>Entre na sua conta - Cardápio Plus</title>
+        <link rel="icon" href="/logoFavIcon.png" />
       </Head>
     
       {/* container */}
       <main className="h-screen w-screen flex justify-center items-center">
 
         {/* form content */}
-        <div className="mx-3 max-w-xl text-center bg-white shadow-md p-4 rounded-sm">
+        <div className="mx-3 max-w-lg text-center bg-white shadow-md p-4 rounded-sm">
 
           <div>
             <Image

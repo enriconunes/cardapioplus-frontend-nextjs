@@ -7,6 +7,8 @@ import Link from "next/link";
 import { MdDeliveryDining } from "react-icons/md";
 import { MdOutlineAdd } from "react-icons/md";
 import { MdEdit } from "react-icons/md";
+import { FaInstagram } from "react-icons/fa";
+import { IoIosCall } from "react-icons/io";
 
 // components
 import Header from "@/src/components/ui/Header";
@@ -115,6 +117,7 @@ export default function dashboard({restaurantDetails, menuDetails}: restaurantDe
                 <title>
                     Restaurox - Seu Restaurante
                 </title>
+                <link rel="icon" href="/logoFavIcon.png" />
             </Head>
 
             <Header/>
@@ -152,17 +155,11 @@ export default function dashboard({restaurantDetails, menuDetails}: restaurantDe
                     </div>
 
                     {/* descriptions */}
-                    <div className="bg-blue-00 w-full flex flex-col mt-2 text-gray-800">
+                    <div className="bg-blue-00 w-full flex flex-col mt-3 text-gray-800">
 
-                        <div className="flex flex-col mt-1 ">
-                            <span className="font-medium -mb-1">Contato</span>
-                            <span className="overflow-hidden text-sm text-gray-600">{restaurant?.contactNumber}</span>
-                        </div>
+                        <div className="flex items-center font-medium text-gray-700"><IoIosCall className="mr-1" size={21}/> {restaurant?.contactNumber}</div>
 
-                        <div className="flex flex-col mt-1">
-                            <span className="font-medium -mb-1">Instagram</span>
-                            <span className="overflow-hidden text-gray-600">@{restaurant?.instagramProfileName}</span>
-                        </div>
+                        <div className="flex items-center font-medium text-gray-700"><FaInstagram className="mr-2" size={19}/> {restaurant?.instagramProfileName}</div>
 
                         <div
                         className={`flex items-center font-medium gap-x-1 text ${restaurant?.doDelivery ? "text-green-700" : "text-red-700"}`}

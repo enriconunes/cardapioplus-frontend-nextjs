@@ -216,6 +216,7 @@ export default function Details({restaurantDetails}: restaurantDetailsProps){
                 <title>
                     Restaurox - Detalhes do Restaurante
                 </title>
+                <link rel="icon" href="/logoFavIcon.png" />
             </Head>
 
             <Header />

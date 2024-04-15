@@ -262,6 +262,7 @@ export default function cardapio(){
             
             <Head>
                 <title>Restaurox - Cardápio Digital</title>
+                <link rel="icon" href="/logoFavIcon.png" />
             </Head>
 
             

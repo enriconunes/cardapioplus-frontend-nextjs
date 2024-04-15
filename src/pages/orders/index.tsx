@@ -183,6 +183,7 @@ export default function Orders(){
 
         <Head>
             <title>Restaurox - Painel de Pedidos</title>
+            <link rel="icon" href="/logoFavIcon.png" />
         </Head>
 
         <Header />

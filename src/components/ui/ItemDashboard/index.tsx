@@ -1,6 +1,7 @@
 import { MdEdit } from "react-icons/md"
 import ModalItem from "../ModalItem"
 import { useState } from "react"
+import Image from "next/image"
 
 // tipagem de um item definido no dashboard
 import { Item } from "@/src/pages/dashboard"
@@ -26,9 +27,11 @@ export function ItemDashboard({item, updateMenu}: ItemProps){
             
                 {/* image item */}
                 <div className="w-1/5 h-full relative">
-                    <img
+                    <Image
                         src={item.imageURL}
                         alt="menu item"
+                        width={200}
+                        height={200}
                         className="absolute inset-0 w-full h-full object-cover rounded-md"
                     />
                 </div>

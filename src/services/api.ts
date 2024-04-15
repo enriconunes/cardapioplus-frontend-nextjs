@@ -15,7 +15,7 @@ export function setupAPIClient(context = undefined){
     let cookies = parseCookies(context)
 
     const api = axios.create({
-        baseURL: `http://localhost:3000`,
+        baseURL: `https://cardapioplus-backend-nodejs.vercel.app/`,
         headers: {
             // receber token pelo cookie caso exista
             Authorization: `Bearer ${cookies['@cardapioplus.token']}`

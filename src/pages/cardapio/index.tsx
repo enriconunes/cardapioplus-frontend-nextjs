@@ -422,7 +422,7 @@ export default function cardapio(){
                         <Image src="/logoWhite.png" alt="Logo Restaurox" width={120} height={50} />
                     </div>
                     <div>
-                        <span className="text-gray-100">Crie o seu cardápio digital!</span>
+                        <Link href={"/dashboard"} className="text-gray-100">Crie o seu cardápio digital!</Link>
                     </div>
                 </footer>
 
